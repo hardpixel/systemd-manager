@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="gnome-shell-extensions">
+  <enum id="org.gnome.shell.extensions.systemd-manager.positions">
+    <value value="0" nick="panel"/>
+    <value value="1" nick="menu"/>
+  </enum>
+
+  <enum id="org.gnome.shell.extensions.systemd-manager.command-methods">
+    <value value="0" nick="pkexec"/>
+    <value value="1" nick="systemctl"/>
+  </enum>
+
+  <schema id="org.gnome.shell.extensions.systemd-manager" path="/org/gnome/shell/extensions/systemd-manager/">
+    <key type="as" name="systemd">
+      <default>[]</default>
+      <summary>Systemd service list</summary>
+      <description>A list of serrvice which are shown</description>
+    </key>
+
+    <key type="b" name="show-add">
+      <default>true</default>
+      <summary>Show the add services button</summary>
+      <description>Whether to show the add services button as last entry in the extensions list.</description>
+    </key>
+
+    <key type="b" name="show-restart">
+      <default>true</default>
+      <summary>Show the restart button for each service</summary>
+      <description>Whether to show the restart button for each service.</description>
+    </key>
+
+    <key name="position" enum="org.gnome.shell.extensions.systemd-manager.positions">
+      <default>"panel"</default>
+      <summary>Where to display the extension indicator</summary>
+    </key>
+
+    <key name="command-method" enum="org.gnome.shell.extensions.systemd-manager.command-methods">
+      <default>"pkexec"</default>
+      <summary>The method to use to manage services</summary>
+    </key>
+  </schema>
+</schemalist>
