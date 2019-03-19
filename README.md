@@ -14,7 +14,7 @@ Done via a password prompt from the command `pkexec` of the polkit package. This
 If you would like to be able to start services without getting prompted for a password, you need to configure a polkit policy.
 
 #### Using pkexec (default)
-The policy file [systemd-policies/org.freedesktop.policykit.pkexec.systemctl.policy](systemd-policies/org.freedesktop.policykit.pkexec.systemctl.policy) allows the execution of `systemctl [start|stop]` without a password
+The policy file [org.freedesktop.policykit.pkexec.systemctl.policy](systemd-policies/org.freedesktop.policykit.pkexec.systemctl.policy) allows the execution of `systemctl [start|stop]` without a password
 confirmation. Copy the file in your polkit policy folder (usually: `/usr/share/polkit-1/actions`).
 
 #### Using systemctl
