@@ -196,7 +196,7 @@ const SystemdManagerSettings = new GObject.Class({
     typeColumn.add_attribute(typeRenderer, 'text', 2);
     this._treeView.append_column(typeColumn);
 
-    let toolbar = new Gtk.Toolbar({ hexpand: true });
+    let toolbar = new Gtk.Toolbar({ hexpand: true, icon_size: 4 });
     toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR);
     servicesPage.add(toolbar);
 
@@ -277,7 +277,7 @@ const SystemdManagerSettings = new GObject.Class({
     grid.attach(labelService, 1, 2, 1, 1);
     grid.attach_next_to(this._systemName,labelService, 1, 1, 1);
 
-    let addToolbar = new Gtk.Toolbar({ hexpand: true });
+    let addToolbar = new Gtk.Toolbar({ hexpand: true, icon_size: 4 });
     addToolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR);
 
     servicesPage.add(addToolbar);
