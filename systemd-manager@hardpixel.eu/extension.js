@@ -111,7 +111,7 @@ let servicesManager;
 
 function enable() {
   servicesManager = new SystemdManager();
-  Main.panel.addToStatusArea('SystemdManager', servicesManager);
+  Main.panel.addToStatusArea('systemdManager', servicesManager);
 }
 
 function disable() {
