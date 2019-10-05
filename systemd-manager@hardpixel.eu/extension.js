@@ -26,7 +26,7 @@ const SystemdManager = new Lang.Class({
       style_class: 'system-status-icon'
     });
 
-    this.actor.add_actor(this.icon);
+    this.add_actor(this.icon);
     this.menu.connect('open-state-changed', Lang.bind(this, this._refresh));
 
     this._loadConfig();
