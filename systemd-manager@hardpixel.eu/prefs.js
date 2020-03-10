@@ -200,15 +200,15 @@ const SystemdManagerSettings = new GObject.Class({
     toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR);
     servicesPage.add(toolbar);
 
-    let upButton = new Gtk.ToolButton({ stock_id: Gtk.STOCK_GO_UP });
+    let upButton = new Gtk.ToolButton({ icon_name: 'go-up-symbolic' });
     upButton.connect('clicked', Lang.bind(this, this._up));
     toolbar.add(upButton);
 
-    let downButton = new Gtk.ToolButton({ stock_id: Gtk.STOCK_GO_DOWN });
+    let downButton = new Gtk.ToolButton({ icon_name: 'go-down-symbolic' });
     downButton.connect('clicked', Lang.bind(this, this._down));
     toolbar.add(downButton);
 
-    let delButton = new Gtk.ToolButton({ stock_id: Gtk.STOCK_DELETE });
+    let delButton = new Gtk.ToolButton({ icon_name: 'list-remove-symbolic' });
     delButton.connect('clicked', Lang.bind(this, this._delete));
     toolbar.add(delButton);
 
@@ -283,7 +283,7 @@ const SystemdManagerSettings = new GObject.Class({
     servicesPage.add(addToolbar);
 
     let addButton = new Gtk.ToolButton({
-      stock_id:     Gtk.STOCK_ADD,
+      icon_name:    'list-add-symbolic',
       label:        'Add',
       is_important: true
     });
