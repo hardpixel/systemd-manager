@@ -7,13 +7,13 @@ var PopupServiceItem = new Lang.Class({
 
   _init(text, active, params) {
     this.params = params || {};
-    this.widget = new PopupMenu.PopupSwitchMenuItem(text, active);
+    this.widget = new PopupMenu.PopupSwitchMenuItem(text, active, { style_class: 'systemd-manager-item' });
 
     this._restartButton();
   },
 
   _icon(icon_name) {
-    let icon = new St.Icon({ icon_name: icon_name });
+    let icon = new St.Icon({ icon_name: icon_name, style_class: 'popup-menu-icon' });
     return icon;
   },
 

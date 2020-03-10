@@ -1,4 +1,9 @@
-.system-menu-action.systemd-manager-button {
+.systemd-manager-button {
   padding: 3px;
-  border: 1px solid;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 100px;
+}
+
+.systemd-manager-item .toggle-switch {
+  margin-left: 10px;
 }
