@@ -4,11 +4,14 @@ const Main             = imports.ui.main;
 const PanelMenu        = imports.ui.panelMenu;
 const PopupMenu        = imports.ui.popupMenu;
 const St               = imports.gi.St;
+const Config           = imports.misc.config
 const Util             = imports.misc.util;
 const ExtensionUtils   = imports.misc.extensionUtils;
 const SystemdExtension = ExtensionUtils.getCurrentExtension();
 const Convenience      = SystemdExtension.imports.convenience;
 const PopupServiceItem = SystemdExtension.imports.popupServiceItem.PopupServiceItem;
+
+const VERSION = parseInt(Config.PACKAGE_VERSION.split('.')[1])
 
 const SystemdManager = new Lang.Class({
   Name: 'SystemdManager',
@@ -88,7 +91,14 @@ const SystemdManager = new Lang.Class({
       this.menu.addMenuItem(item);
 
       item.connect('activate', () => {
-        Util.spawn(['gnome-shell-extension-prefs', 'systemd-manager@hardpixel.eu']);
+        if (ExtensionUtils.openPrefs) {
+          ExtensionUtils.openPrefs();
+        } else if (VERSION > 34) {
+          Util.spawn(['gnome-extensions', 'prefs', SystemdExtension.uuid]);
+        } else {
+          Util.spawn(['gnome-shell-extension-prefs', SystemdExtension.uuid]);
+        }
+
         this.menu.close();
       });
     }
