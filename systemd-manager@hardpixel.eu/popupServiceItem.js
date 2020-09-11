@@ -37,6 +37,6 @@ var PopupServiceItem = new Lang.Class({
     if (!this.params.restartButton) return;
 
     this.restartButton = this._button('restart', 'view-refresh-symbolic');
-    this.widget.add(this.restartButton, { expand: false, x_align: St.Align.END });
+    this.widget.add_child(this.restartButton);
   }
 });
