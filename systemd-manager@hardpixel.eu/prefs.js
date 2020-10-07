@@ -1,3 +1,4 @@
+const Bytes            = imports.byteArray
 const GLib             = imports.gi.GLib
 const GObject          = imports.gi.GObject
 const Gtk              = imports.gi.Gtk
@@ -299,12 +300,12 @@ const SystemdManagerSettings = new GObject.Class({
     let cmd_1 = 'sh -c "systemctl --' + type + ' list-unit-files --type=service,timer --no-legend | awk \'{print $1}\'"'
     let [_u1, out_u1, err_u1, stat_u1] = GLib.spawn_command_line_sync(cmd_1)
 
-    let allFiltered = out_u1.toString().split("\n")
+    let allFiltered = Bytes.toString(out_u1).split("\n")
 
     let cmd_2 = 'sh -c "systemctl --' + type + ' list-units --type=service,timer --no-legend | awk \'{print $1}\'"'
     let [_u2, out_u2, err_u2, stat_u2] = GLib.spawn_command_line_sync(cmd_2)
 
-    allFiltered = allFiltered.concat(out_u2.toString().split("\n"))
+    allFiltered = allFiltered.concat(Bytes.toString(out_u2).split("\n"))
 
     return allFiltered.sort(function (a, b) {
       return a.toLowerCase().localeCompare(b.toLowerCase())
