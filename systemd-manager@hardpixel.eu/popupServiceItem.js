@@ -1,21 +1,18 @@
-const Lang      = imports.lang
 const St        = imports.gi.St
 const PopupMenu = imports.ui.popupMenu
 
-var PopupServiceItem = new Lang.Class({
-  Name: 'PopupServiceItem',
-
-  _init(text, active, params) {
+var PopupServiceItem = class PopupServiceItem {
+  constructor(text, active, params) {
     this.params = params || {}
     this.widget = new PopupMenu.PopupSwitchMenuItem(text, active, { style_class: 'systemd-manager-item' })
 
     this._restartButton()
-  },
+  }
 
   _icon(icon_name) {
     let icon = new St.Icon({ icon_name: icon_name, style_class: 'popup-menu-icon' })
     return icon
-  },
+  }
 
   _button(button_name, icon_name) {
     let options = {
@@ -31,7 +28,7 @@ var PopupServiceItem = new Lang.Class({
     button.child = this._icon(icon_name)
 
     return button
-  },
+  }
 
   _restartButton() {
     if (!this.params.restartButton) return
@@ -39,4 +36,4 @@ var PopupServiceItem = new Lang.Class({
     this.restartButton = this._button('restart', 'view-refresh-symbolic')
     this.widget.add_child(this.restartButton)
   }
-})
+}

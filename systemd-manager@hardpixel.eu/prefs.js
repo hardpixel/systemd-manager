@@ -1,4 +1,3 @@
-const Lang             = imports.lang
 const GLib             = imports.gi.GLib
 const GObject          = imports.gi.GObject
 const Gtk              = imports.gi.Gtk
@@ -14,7 +13,7 @@ const SystemdManagerSettings = new GObject.Class({
 
   _init(params) {
     this._settings = Convenience.getSettings()
-    this._settings.connect('changed', Lang.bind(this, this._refresh))
+    this._settings.connect('changed', () => this._refresh())
 
     this._changedPermitted = false
 
@@ -173,7 +172,7 @@ const SystemdManagerSettings = new GObject.Class({
 
     let selection = this._treeView.get_selection()
     selection.set_mode(Gtk.SelectionMode.SINGLE)
-    selection.connect('changed', Lang.bind(this, this._onSelectionChanged))
+    selection.connect('changed', () => this._onSelectionChanged())
 
     let labelColumn = new Gtk.TreeViewColumn({ expand: true, title: 'Label' })
     let labelRenderer = new Gtk.CellRendererText
@@ -201,15 +200,15 @@ const SystemdManagerSettings = new GObject.Class({
     servicesPage.add(toolbar)
 
     let upButton = new Gtk.ToolButton({ icon_name: 'go-up-symbolic' })
-    upButton.connect('clicked', Lang.bind(this, this._up))
+    upButton.connect('clicked', () => this._up())
     toolbar.add(upButton)
 
     let downButton = new Gtk.ToolButton({ icon_name: 'go-down-symbolic' })
-    downButton.connect('clicked', Lang.bind(this, this._down))
+    downButton.connect('clicked', () => this._down())
     toolbar.add(downButton)
 
     let delButton = new Gtk.ToolButton({ icon_name: 'list-remove-symbolic' })
-    delButton.connect('clicked', Lang.bind(this, this._delete))
+    delButton.connect('clicked', () => this._delete())
     toolbar.add(delButton)
 
     this._selDepButtons = [upButton, downButton, delButton]
@@ -288,7 +287,7 @@ const SystemdManagerSettings = new GObject.Class({
       is_important: true
     })
 
-    addButton.connect('clicked', Lang.bind(this, this._add))
+    addButton.connect('clicked', () => this._add())
     addToolbar.add(addButton)
 
     this._changedPermitted = true
