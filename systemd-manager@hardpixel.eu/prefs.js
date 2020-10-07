@@ -63,44 +63,6 @@ const SystemdManagerSettings = new GObject.Class({
     otherPage.attach(showRestartLabel, 1, 2, 1, 1)
     otherPage.attach_next_to(this._showRestartCheckbox, showRestartLabel, 1, 1, 1)
 
-    let positionLabel = new Gtk.Label({
-      label:   'Position',
-      xalign:  0,
-      hexpand: true
-    })
-
-    let model = new Gtk.ListStore()
-    model.set_column_types([GObject.TYPE_INT, GObject.TYPE_STRING])
-
-    this._positionCombo = new Gtk.ComboBox({ model: model })
-    this._positionCombo.get_style_context().add_class(Gtk.STYLE_CLASS_RAISED)
-    this._positionCombo.set_size_request(160, 0)
-
-    let renderer = new Gtk.CellRendererText()
-    this._positionCombo.pack_start(renderer, true)
-    this._positionCombo.add_attribute(renderer, 'text', 1)
-
-    let positionsItems = [
-      { id: 0, name: 'Panel' },
-      { id: 1, name: 'Menu'}
-    ]
-
-    for (let i in positionsItems) {
-      let item = positionsItems[i]
-      let iter = model.append()
-
-      model.set(iter, [0, 1], [item.id, item.name])
-    }
-
-    this._positionCombo.set_active(this._settings.get_enum('position'))
-
-    this._positionCombo.connect('changed', (combobox) => {
-      this._settings.set_enum('position', combobox.get_active())
-    })
-
-    otherPage.attach(positionLabel, 1, 3, 1, 1)
-    otherPage.attach_next_to(this._positionCombo, positionLabel, 1, 1, 1)
-
     let commandMethodLabel = new Gtk.Label({
       label:   'Command Method',
       xalign:  0,
