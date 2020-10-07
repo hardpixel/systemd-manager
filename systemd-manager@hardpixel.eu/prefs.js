@@ -88,7 +88,7 @@ const SystemdManagerSettings = new GObject.Class({
       { id: 1, name: 'Menu'}
     ]
 
-    for (let i = 0; i < positionsItems.length; i++) {
+    for (let i in positionsItems) {
       let item = positionsItems[i];
       let iter = model.append();
 
@@ -129,7 +129,7 @@ const SystemdManagerSettings = new GObject.Class({
       { id: 1, name: 'systemctl' }
     ]
 
-    for (let i = 0; i < commandMethodsItems.length; i++) {
+    for (let i in commandMethodsItems) {
       let item = commandMethodsItems[i];
       let iter = commandMethodModel.append();
 
@@ -485,7 +485,7 @@ const SystemdManagerSettings = new GObject.Class({
     let currentItems = this._settings.get_strv('systemd');
     let validItems   = [];
 
-    for (let i = 0; i < currentItems.length; i++) {
+    for (let i in currentItems) {
       let entry = JSON.parse(currentItems[i]);
 
       if (!this._isValidTemplateInstance(entry['service'], entry['type']) && (this._availableSystemdServices['all'].indexOf(entry['service']) < 0))
