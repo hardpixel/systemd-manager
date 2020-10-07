@@ -6,7 +6,6 @@ const ExtensionUtils   = imports.misc.extensionUtils
 const SystemdExtension = ExtensionUtils.getCurrentExtension()
 const Convenience      = SystemdExtension.imports.convenience
 
-
 const SystemdManagerSettings = new GObject.Class({
   Name: 'SystemdManagerSettings',
   Extends: Gtk.Notebook,
