@@ -7,6 +7,8 @@ const ExtensionUtils   = imports.misc.extensionUtils
 const SystemdExtension = ExtensionUtils.getCurrentExtension()
 const Convenience      = SystemdExtension.imports.convenience
 
+const DEFAULT_BINDING = Gio.SettingsBindFlags.DEFAULT
+
 const SystemdManagerSettings = new GObject.Class({
   Name: 'SystemdManagerSettings',
   Extends: Gtk.Notebook,
@@ -39,13 +41,10 @@ const SystemdManagerSettings = new GObject.Class({
       hexpand: true
     })
 
-    this._showAddCheckbox = new Gtk.Switch({ halign: 2 })
+    showAddLabel.set_size_request(0, 36)
 
-    this._showAddCheckbox.connect('notify::active', button => {
-      this._changedPermitted = false
-      this._settings.set_boolean('show-add', button.active)
-      this._changedPermitted = true
-    })
+    this._showAddCheckbox = new Gtk.Switch({ halign: 2, valign: 3 })
+    this._settings.bind('show-add', this._showAddCheckbox, 'active', DEFAULT_BINDING)
 
     otherPage.attach(showAddLabel, 1, 1, 1, 1)
     otherPage.attach_next_to(this._showAddCheckbox, showAddLabel, 1, 1, 1)
@@ -56,12 +55,10 @@ const SystemdManagerSettings = new GObject.Class({
       hexpand: true
     })
 
-    this._showRestartCheckbox = new Gtk.Switch({ halign: 2 })
-    this._showRestartCheckbox.connect('notify::active', button => {
-      this._changedPermitted = false
-      this._settings.set_boolean('show-restart', button.active)
-      this._changedPermitted = true
-    })
+    showRestartLabel.set_size_request(0, 36)
+
+    this._showRestartCheckbox = new Gtk.Switch({ halign: 2, valign: 3 })
+    this._settings.bind('show-restart', this._showRestartCheckbox, 'active', DEFAULT_BINDING)
 
     otherPage.attach(showRestartLabel, 1, 2, 1, 1)
     otherPage.attach_next_to(this._showRestartCheckbox, showRestartLabel, 1, 1, 1)
@@ -77,6 +74,7 @@ const SystemdManagerSettings = new GObject.Class({
 
     this._positionCombo = new Gtk.ComboBox({ model: model })
     this._positionCombo.get_style_context().add_class(Gtk.STYLE_CLASS_RAISED)
+    this._positionCombo.set_size_request(160, 0)
 
     let renderer = new Gtk.CellRendererText()
     this._positionCombo.pack_start(renderer, true)
@@ -94,14 +92,10 @@ const SystemdManagerSettings = new GObject.Class({
       model.set(iter, [0, 1], [item.id, item.name])
     }
 
-    this._positionCombo.connect('changed', entry => {
-      let [success, iter] = this._positionCombo.get_active_iter()
+    this._positionCombo.set_active(this._settings.get_enum('position'))
 
-      if (success) {
-        this._changedPermitted = false
-        this._settings.set_enum('position', this._positionCombo.get_model().get_value(iter, 0))
-        this._changedPermitted = true
-      }
+    this._positionCombo.connect('changed', (combobox) => {
+      this._settings.set_enum('position', combobox.get_active())
     })
 
     otherPage.attach(positionLabel, 1, 3, 1, 1)
@@ -118,6 +112,7 @@ const SystemdManagerSettings = new GObject.Class({
 
     this._commandMethodCombo = new Gtk.ComboBox({ model: commandMethodModel })
     this._commandMethodCombo.get_style_context().add_class(Gtk.STYLE_CLASS_RAISED)
+    this._commandMethodCombo.set_size_request(160, 0)
 
     let commandMethodRenderer = new Gtk.CellRendererText()
     this._commandMethodCombo.pack_start(commandMethodRenderer, true)
@@ -135,14 +130,10 @@ const SystemdManagerSettings = new GObject.Class({
       commandMethodModel.set(iter, [0, 1], [item.id, item.name])
     }
 
-    this._commandMethodCombo.connect('changed', entry => {
-      let [success, iter] = this._commandMethodCombo.get_active_iter()
+    this._commandMethodCombo.set_active(this._settings.get_enum('command-method'))
 
-      if (success) {
-        this._changedPermitted = false
-        this._settings.set_enum('command-method', this._commandMethodCombo.get_model().get_value(iter, 0))
-        this._changedPermitted = true
-      }
+    this._commandMethodCombo.connect('changed', (combobox) => {
+      this._settings.set_enum('command-method', combobox.get_active())
     })
 
     otherPage.attach(commandMethodLabel, 1, 4, 1, 1)
@@ -477,9 +468,6 @@ const SystemdManagerSettings = new GObject.Class({
       return
 
     this._store.clear()
-    this._showAddCheckbox.set_active(this._settings.get_boolean('show-add'))
-    this._showRestartCheckbox.set_active(this._settings.get_boolean('show-restart'))
-    this._positionCombo.set_active(this._settings.get_enum('position'))
 
     let currentItems = this._settings.get_strv('systemd')
     let validItems   = []
