@@ -1,5 +1,5 @@
 {
-  "shell-version": ["3.32", "3.34", "3.36", "3.38"],
+  "shell-version": ["3.32", "3.34", "3.36", "3.38", "40"],
   "uuid": "systemd-manager@hardpixel.eu",
   "url": "https://github.com/hardpixel/systemd-manager",
   "settings-schema": "org.gnome.shell.extensions.systemd-manager",
