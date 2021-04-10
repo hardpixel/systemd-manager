@@ -3,465 +3,254 @@ const GLib             = imports.gi.GLib
 const GObject          = imports.gi.GObject
 const Gtk              = imports.gi.Gtk
 const Gio              = imports.gi.Gio
+const Config           = imports.misc.config
 const ExtensionUtils   = imports.misc.extensionUtils
 const SystemdExtension = ExtensionUtils.getCurrentExtension()
 const Convenience      = SystemdExtension.imports.convenience
+const Utils            = SystemdExtension.imports.utils
 
+const VERSION  = parseInt(Config.PACKAGE_VERSION.replace(/^3\./, '').split('.')[0])
+const TEMPLATE = VERSION < 40 ? 'settings-gtk3.ui' : 'settings-gtk4.ui'
+
+const SERVICE_TYPES   = ['system', 'user']
 const DEFAULT_BINDING = Gio.SettingsBindFlags.DEFAULT
 
-const SystemdManagerSettings = new GObject.Class({
-  Name: 'SystemdManagerSettings',
-  Extends: Gtk.Notebook,
-
-  _init(params) {
-    this._settings = Convenience.getSettings()
-    this._settings.connect('changed', () => this._refresh())
-
-    this._changedPermitted = false
-
-    this.parent(params)
-    this.set_tab_pos(Gtk.PositionType.TOP)
-    this.set_show_border(false)
-
-    let servicesPage = new Gtk.Grid()
-    servicesPage.set_orientation(Gtk.Orientation.VERTICAL)
-    servicesPage.margin = 20
-
-    let otherPage = new Gtk.Grid()
-    otherPage.set_orientation(Gtk.Orientation.VERTICAL)
-    otherPage.set_row_spacing(10)
-    otherPage.margin = 20
-
-    this.append_page(servicesPage, new Gtk.Label({ label: 'Services', hexpand: true }))
-    this.append_page(otherPage, new Gtk.Label({ label: 'Settings', hexpand: true }))
-
-    let showAddLabel = new Gtk.Label({
-      label:   'Show add services',
-      xalign:  0,
-      hexpand: true
-    })
-
-    showAddLabel.set_size_request(0, 36)
-
-    this._showAddCheckbox = new Gtk.Switch({ halign: 2, valign: 3 })
-    this._settings.bind('show-add', this._showAddCheckbox, 'active', DEFAULT_BINDING)
-
-    otherPage.attach(showAddLabel, 1, 1, 1, 1)
-    otherPage.attach_next_to(this._showAddCheckbox, showAddLabel, 1, 1, 1)
-
-    let showRestartLabel = new Gtk.Label({
-      label:   'Show restart button',
-      xalign:  0,
-      hexpand: true
-    })
-
-    showRestartLabel.set_size_request(0, 36)
-
-    this._showRestartCheckbox = new Gtk.Switch({ halign: 2, valign: 3 })
-    this._settings.bind('show-restart', this._showRestartCheckbox, 'active', DEFAULT_BINDING)
-
-    otherPage.attach(showRestartLabel, 1, 2, 1, 1)
-    otherPage.attach_next_to(this._showRestartCheckbox, showRestartLabel, 1, 1, 1)
-
-    let commandMethodLabel = new Gtk.Label({
-      label:   'Command Method',
-      xalign:  0,
-      hexpand: true
-    })
-
-    let commandMethodModel = new Gtk.ListStore()
-    commandMethodModel.set_column_types([GObject.TYPE_INT, GObject.TYPE_STRING])
-
-    this._commandMethodCombo = new Gtk.ComboBox({ model: commandMethodModel })
-    this._commandMethodCombo.get_style_context().add_class(Gtk.STYLE_CLASS_RAISED)
-    this._commandMethodCombo.set_size_request(160, 0)
-
-    let commandMethodRenderer = new Gtk.CellRendererText()
-    this._commandMethodCombo.pack_start(commandMethodRenderer, true)
-    this._commandMethodCombo.add_attribute(commandMethodRenderer, 'text', 1)
-
-    let commandMethodsItems = [
-      { id: 0, name: 'pkexec' },
-      { id: 1, name: 'systemctl' }
-    ]
-
-    for (let i in commandMethodsItems) {
-      let item = commandMethodsItems[i]
-      let iter = commandMethodModel.append()
-
-      commandMethodModel.set(iter, [0, 1], [item.id, item.name])
-    }
-
-    this._commandMethodCombo.set_active(this._settings.get_enum('command-method'))
-
-    this._commandMethodCombo.connect('changed', (combobox) => {
-      this._settings.set_enum('command-method', combobox.get_active())
-    })
-
-    otherPage.attach(commandMethodLabel, 1, 4, 1, 1)
-    otherPage.attach_next_to(this._commandMethodCombo, commandMethodLabel, 1, 1, 1)
-
-    let treeViewLabel = new Gtk.Label({
-      label:         '<b>Listed Services</b>',
-      use_markup:    true,
-      halign:        Gtk.Align.START,
-      margin_bottom: 10
-    })
-
-    servicesPage.add(treeViewLabel)
-
-    this._store = new Gtk.ListStore()
-    this._store.set_column_types([GObject.TYPE_STRING, GObject.TYPE_STRING, GObject.TYPE_STRING])
-
-    this._treeView = new Gtk.TreeView({
-      model:   this._store,
-      hexpand: true,
-      vexpand: true
-    })
-
-    let treeFrame = new Gtk.Frame()
-    treeFrame.add(this._treeView)
-    servicesPage.add(treeFrame)
-
-    let selection = this._treeView.get_selection()
-    selection.set_mode(Gtk.SelectionMode.SINGLE)
-    selection.connect('changed', () => this._onSelectionChanged())
-
-    let labelColumn = new Gtk.TreeViewColumn({ expand: true, title: 'Label' })
-    let labelRenderer = new Gtk.CellRendererText
-
-    labelColumn.pack_start(labelRenderer, true)
-    labelColumn.add_attribute(labelRenderer, 'text', 0)
-    this._treeView.append_column(labelColumn)
-
-    let serviceColumn = new Gtk.TreeViewColumn({ expand: true, title: 'Service' })
-    let serviceRenderer = new Gtk.CellRendererText
-
-    serviceColumn.pack_start(serviceRenderer, true)
-    serviceColumn.add_attribute(serviceRenderer, 'text', 1)
-    this._treeView.append_column(serviceColumn)
-
-    let typeColumn = new Gtk.TreeViewColumn({ expand: true, title: 'Type' })
-    let typeRenderer = new Gtk.CellRendererText
-
-    typeColumn.pack_start(typeRenderer, true)
-    typeColumn.add_attribute(typeRenderer, 'text', 2)
-    this._treeView.append_column(typeColumn)
-
-    let toolbar = new Gtk.Toolbar({ hexpand: true, icon_size: 4 })
-    toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
-    servicesPage.add(toolbar)
-
-    let upButton = new Gtk.ToolButton({ icon_name: 'go-up-symbolic' })
-    upButton.connect('clicked', () => this._up())
-    toolbar.add(upButton)
-
-    let downButton = new Gtk.ToolButton({ icon_name: 'go-down-symbolic' })
-    downButton.connect('clicked', () => this._down())
-    toolbar.add(downButton)
-
-    let delButton = new Gtk.ToolButton({ icon_name: 'list-remove-symbolic' })
-    delButton.connect('clicked', () => this._delete())
-    toolbar.add(delButton)
-
-    this._selDepButtons = [upButton, downButton, delButton]
-
-    let gridLabel = new Gtk.Label({
-      label:         '<b>Add new Service</b>',
-      use_markup:    true,
-      halign:        Gtk.Align.START,
-      margin_top:    20,
-      margin_bottom: 10
-    })
-
-    servicesPage.add(gridLabel)
-
-    let grid = new Gtk.Grid({
-      column_spacing: 10,
-      row_spacing:    10,
-      margin:         10
-    })
-
-    let gridFrame = new Gtk.Frame()
-    gridFrame.add(grid)
-    servicesPage.add(gridFrame)
-
-    let labelName = new Gtk.Label({ label: 'Label' })
-    labelName.halign = 2
-
-    this._displayName = new Gtk.Entry({ hexpand: true })
-    this._displayName.set_placeholder_text('Name in menu')
-
-    let labelService = new Gtk.Label({ label: 'Service' })
-    labelService.halign = 2
-
-    let sListStore = new Gtk.ListStore()
-    sListStore.set_column_types([GObject.TYPE_STRING, GObject.TYPE_STRING, GObject.TYPE_STRING])
-
-    let types = ['system', 'user']
-
-    this._availableSystemdServices = { 'all': [] }
-
-    for (let t in types) {
-      let type = types[t]
-
-      this._availableSystemdServices[type]  = this._getSystemdServicesList(type)
-      this._availableSystemdServices['all'] = this._availableSystemdServices['all'].concat(this._availableSystemdServices[type])
-
-      for (let i in this._availableSystemdServices[type]) {
-        let name = this._availableSystemdServices[type][i] + ' ' + type
-        sListStore.set(sListStore.append(), [0, 1, 2], [name, this._availableSystemdServices[type][i], type])
-      }
-    }
-
-    this._systemName = new Gtk.Entry({ hexpand: true })
-    this._systemName.set_placeholder_text('Systemd service name and type')
-
-    let completion = new Gtk.EntryCompletion()
-    this._systemName.set_completion(completion)
-    completion.set_model(sListStore)
-
-    completion.set_text_column(0)
-
-    grid.attach(labelName, 1, 1, 1, 1)
-    grid.attach_next_to(this._displayName, labelName, 1, 1, 1)
-
-    grid.attach(labelService, 1, 2, 1, 1)
-    grid.attach_next_to(this._systemName,labelService, 1, 1, 1)
-
-    let addToolbar = new Gtk.Toolbar({ hexpand: true, icon_size: 4 })
-    addToolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
-
-    servicesPage.add(addToolbar)
-
-    let addButton = new Gtk.ToolButton({
-      icon_name:    'list-add-symbolic',
-      label:        'Add',
-      is_important: true
-    })
-
-    addButton.connect('clicked', () => this._add())
-    addToolbar.add(addButton)
-
-    this._changedPermitted = true
-
-    this._refresh()
-    this._onSelectionChanged()
-  },
-
-  _getSystemdServicesList(type) {
-    let cmd_1 = 'sh -c "systemctl --' + type + ' list-unit-files --type=service,timer --no-legend | awk \'{print $1}\'"'
-    let [_u1, out_u1, err_u1, stat_u1] = GLib.spawn_command_line_sync(cmd_1)
-
-    let allFiltered = Bytes.toString(out_u1).split("\n")
-
-    let cmd_2 = 'sh -c "systemctl --' + type + ' list-units --type=service,timer --no-legend | awk \'{print $1}\'"'
-    let [_u2, out_u2, err_u2, stat_u2] = GLib.spawn_command_line_sync(cmd_2)
-
-    allFiltered = allFiltered.concat(Bytes.toString(out_u2).split("\n"))
-
-    return allFiltered.sort(function (a, b) {
-      return a.toLowerCase().localeCompare(b.toLowerCase())
-    })
-  },
-
-  _getTypeOfService(service) {
-    let type = 'undefined'
-
-    if (this._availableSystemdServices['system'].indexOf(service) != -1)
-      type = 'system'
-    else if (this._availableSystemdServices['user'].indexOf(service) != -1)
-      type = 'user'
-
-    return type
-  },
-
-  _getIdFromIter(iter) {
-    let displayName = this._store.get_value(iter, 0)
-    let serviceName = this._store.get_value(iter, 1)
-    let type        = this._store.get_value(iter, 2)
-
-    return JSON.stringify({ name: displayName, service: serviceName, type: type })
-  },
-
-  _isValidTemplateInstance(serviceName, type) {
-    let index  = serviceName.indexOf('@')
-    let result = index != -1
-
-    if (result) {
-      let templateName = serviceName.substr(0, index + 1) + '.service'
-      result = result && (type == 'system' || type == 'user') && (this._availableSystemdServices[type].indexOf(templateName) != -1)
-    }
-
-    return result
-  },
-
-  _add() {
-    let displayName  = this._displayName.text.trim()
-    let serviceEntry = this._systemName.text.trim()
-
-    if (displayName.length > 0 && serviceEntry.length > 0) {
-      let serviceArray = serviceEntry.split(' ')
-      let serviceName  = ''
-      let type         = ''
-
-      if (serviceArray.length > 1) {
-        serviceName = serviceArray[0]
-        type        = serviceArray[1]
+var SystemdManagerSettings = GObject.registerClass(
+  class SystemdManagerPrefsWidget extends Gtk.Box {
+    _init(params) {
+      this._settings = Convenience.getSettings()
+      super._init(params)
+
+      this._buildable = new Gtk.Builder()
+      this._buildable.add_from_file(`${SystemdExtension.path}/${TEMPLATE}`)
+
+      this._container = this.getObject('prefs_widget')
+
+      if (this.add) {
+        this.add(this._container)
       } else {
-        serviceName = serviceArray[0]
-        type        = this._getTypeOfService(serviceName)
+        this.append(this._container)
       }
 
-      if (!this._isValidTemplateInstance(serviceName, type) && ( !(type == 'system' || type == 'user') || this._availableSystemdServices[type].indexOf(serviceName) == -1)) {
-        this._messageDialog = new Gtk.MessageDialog({
-          title:        'Warning',
-          modal:        true,
-          buttons:      Gtk.ButtonsType.OK,
-          message_type: Gtk.MessageType.WARNING,
-          text:         'Service does not exist.'
-        })
+      this.bindBoolean('show-add')
+      this.bindBoolean('show-restart')
+      this.bindEnum('command-method')
 
-        this._messageDialog.connect('response', () => {
-          this._messageDialog.close()
-        })
+      this.connectEvent('services_selection', 'changed', this._onServiceSelect)
+      this.connectEvent('service_up', 'clicked', this._onServiceMoveUp)
+      this.connectEvent('service_down', 'clicked', this._onServiceMoveDown)
+      this.connectEvent('service_remove', 'clicked', this._onServiceRemove)
+      this.connectEvent('service_add', 'clicked', this._onServiceAdd)
 
-        this._messageDialog.show()
-      } else {
-        let id           = JSON.stringify({ name: displayName, service: serviceName, type: type })
-        let currentItems = this._settings.get_strv('systemd')
-        let index        = currentItems.indexOf(id)
+      this.updateAvailableServices()
+      this.updateServicesList()
+    }
 
-        if (index < 0) {
-          this._changedPermitted = false
-          currentItems.push(id)
+    getObject(name) {
+      return this._buildable.get_object(name)
+    }
 
-          this._settings.set_strv('systemd', currentItems)
-          this._store.set(this._store.append(), [0, 1, 2], [displayName, serviceName, type])
+    getInput(setting) {
+      return this.getObject(setting.replace(/-/g, '_'))
+    }
 
-          this._changedPermitted = true
-        }
+    bindInput(setting, prop) {
+      const widget = this.getInput(setting)
+      this._settings.bind(setting, widget, prop, DEFAULT_BINDING)
+    }
 
-        this._displayName.text = ''
-        this._systemName.text  = ''
-      }
-    } else {
-      this._messageDialog = new Gtk.MessageDialog({
+    bindEnum(setting) {
+      const widget = this.getInput(setting)
+      widget.set_active(this._settings.get_enum(setting))
+
+      widget.connect('changed', input => {
+        this._settings.set_enum(setting, input.get_active())
+      })
+    }
+
+    bindBoolean(setting) {
+      this.bindInput(setting, 'active')
+    }
+
+    connectEvent(object, name, callback) {
+      const widget = this.getObject(object)
+      widget.connect(name, callback.bind(this))
+    }
+
+    showWarning(text) {
+      const dialog = new Gtk.MessageDialog({
         title:        'Warning',
+        text:         text,
         modal:        true,
         buttons:      Gtk.ButtonsType.OK,
-        message_type: Gtk.MessageType.WARNING,
-        text:         'No label and/or service specified.'
+        message_type: Gtk.MessageType.WARNING
       })
 
-      this._messageDialog.connect('response', () => {
-        this._messageDialog.close()
+      dialog.connect('response', () => dialog.close())
+      dialog.show()
+    }
+
+    isValidService(name) {
+      return this.availableServices.all.includes(name)
+    }
+
+    getServiceType(name) {
+      if (this.availableServices.system.includes(name)) {
+        return 'system'
+      }
+
+      if (this.availableServices.user.includes(name)) {
+        return 'user'
+      }
+    }
+
+    updateAvailableServices() {
+      const store = this.getObject('services_add_completion_model')
+      store.clear()
+
+      this.availableServices = { 'all': [] }
+
+      SERVICE_TYPES.forEach(type => {
+        const services = Utils.getServicesList(type)
+
+        this.availableServices[type] = services
+        this.availableServices.all.push(...services)
+
+        services.forEach(service => {
+          const iter = store.append()
+          store.set(iter, [0, 1], [service, type])
+        })
       })
-
-      this._messageDialog.show()
     }
-  },
 
-  _up() {
-    let [any, model, iter] = this._treeView.get_selection().get_selected()
+    updateServicesList() {
+      const store = this.getObject('services_list_model')
+      store.clear()
 
-    if (any) {
-      let index = this._settings.get_strv('systemd').indexOf(this._getIdFromIter(iter))
-      this._move(index, index - 1)
+      const current = this._settings.get_strv('systemd')
+      const updated = current.reduce((items, item) => {
+        const entry = JSON.parse(item)
+
+        if (this.isValidService(entry.service)) {
+          items.push(JSON.stringify(entry))
+
+          const iter = store.append()
+          store.set(iter, [0, 1, 2], [entry.name, entry.service, entry.type])
+        }
+
+        return items
+      }, [])
+
+      this._settings.set_strv('systemd', updated)
     }
-  },
 
-  _down() {
-    let [any, model, iter] = this._treeView.get_selection().get_selected()
+    getServiceFromIter(iter) {
+      const store   = this.getObject('services_list_model')
+      const name    = store.get_value(iter, 0)
+      const service = store.get_value(iter, 1)
+      const type    = store.get_value(iter, 2)
 
-    if (any) {
-      let index = this._settings.get_strv('systemd').indexOf(this._getIdFromIter(iter))
-      this._move(index, index + 1)
+      return { name, service, type }
     }
-  },
 
-  _move(oldIndex, newIndex) {
-    let currentItems = this._settings.get_strv('systemd')
+    getSelectedService() {
+      const selection = this.getObject('services_selection')
+      const [any, store, iter] = selection.get_selected()
 
-    if (oldIndex < 0 || oldIndex >= currentItems.length || newIndex < 0 || newIndex >= currentItems.length)
-      return
+      const items = this._settings.get_strv('systemd')
+      const service = any && this.getServiceFromIter(iter)
+      const index = service ? items.indexOf(JSON.stringify(service)) : -1
 
-    currentItems.splice(newIndex, 0, currentItems.splice(oldIndex, 1)[0])
+      return [index, items, store, iter]
+    }
 
-    this._settings.set_strv('systemd', currentItems)
+    _onServiceSelect() {
+      const toolbar   = this.getObject('services_toolbar')
+      const selection = this.getObject('services_selection')
 
-    this._treeView.get_selection().unselect_all()
-    this._treeView.get_selection().select_path(Gtk.TreePath.new_from_string(String(newIndex)))
-  },
+      toolbar.set_sensitive(selection.count_selected_rows() > 0)
+    }
 
-  _delete() {
-    let [any, model, iter] = this._treeView.get_selection().get_selected()
+    _onServiceMove(offset) {
+      const [index, items, store, iter] = this.getSelectedService()
+      if (index < 0 || index >= items.length) return
 
-    if (any) {
-      let currentItems = this._settings.get_strv('systemd')
-      let index        = currentItems.indexOf(this._getIdFromIter(iter))
+      items.splice(index + offset, 0, items.splice(index, 1)[0])
+      this._settings.set_strv('systemd', items)
 
-      if (index < 0)
+      const current = iter.copy()
+
+      if (offset < 0) {
+        store.iter_previous(iter)
+        store.move_before(current, iter)
+      } else {
+        store.iter_next(iter)
+        store.move_after(current, iter)
+      }
+    }
+
+    _onServiceMoveUp() {
+      this._onServiceMove(-1)
+    }
+
+    _onServiceMoveDown() {
+      this._onServiceMove(1)
+    }
+
+    _onServiceRemove() {
+      const [index, items, store, iter] = this.getSelectedService()
+      if (index < 0) return
+
+      items.splice(index, 1)
+      this._settings.set_strv('systemd', items)
+
+      store.remove(iter)
+    }
+
+    _onServiceAdd() {
+      const nameEntry = this.getObject('add_service_label')
+      const unitEntry = this.getObject('add_service_unit')
+
+      const name    = nameEntry.get_text().trim()
+      const service = unitEntry.get_text().trim()
+      const type    = this.getServiceType(service)
+
+      if (!name.length || !service.length) {
+        this.showWarning('No label and/or service specified')
         return
+      }
 
-      currentItems.splice(index, 1)
-      this._settings.set_strv('systemd', currentItems)
+      if (!this.isValidService(service) || !type) {
+        this.showWarning('Service does not exist')
+        return
+      }
 
-      this._store.remove(iter)
+      const id    = JSON.stringify({ name, service, type })
+      const items = this._settings.get_strv('systemd')
+      const index = items.indexOf(id)
+      const store = this.getObject('services_list_model')
+
+      if (index < 0) {
+        items.push(id)
+        this._settings.set_strv('systemd', items)
+
+        const iter = store.append()
+        store.set(iter, [0, 1, 2], [name, service, type])
+      }
+
+      nameEntry.set_text('')
+      unitEntry.set_text('')
     }
-  },
-
-  _onSelectionChanged() {
-    let [any, model, iter] = this._treeView.get_selection().get_selected()
-
-    if (any) {
-      this._selDepButtons.forEach(function(value) {
-        value.set_sensitive(true)
-      })
-    } else {
-      this._selDepButtons.forEach(function(value) {
-        value.set_sensitive(false)
-      })
-    }
-  },
-
-  _refresh() {
-    if (!this._changedPermitted)
-      return
-
-    this._store.clear()
-
-    let currentItems = this._settings.get_strv('systemd')
-    let validItems   = []
-
-    for (let i in currentItems) {
-      let entry = JSON.parse(currentItems[i])
-
-      if (!this._isValidTemplateInstance(entry['service'], entry['type']) && (this._availableSystemdServices['all'].indexOf(entry['service']) < 0))
-        continue
-
-      if(!('type' in entry))
-        entry['type'] = this._getTypeOfService(entry['service'])
-
-      validItems.push(JSON.stringify(entry))
-
-      let iter = this._store.append()
-      this._store.set(iter, [0, 1, 2], [entry['name'], entry['service'], entry['type']])
-    }
-
-    this._changedPermitted = false
-    this._settings.set_strv('systemd', validItems)
-    this._changedPermitted = true
   }
-})
+)
 
 function init() {
   Convenience.initTranslations()
 }
 
 function buildPrefsWidget() {
-  let widget = new SystemdManagerSettings()
-  widget.show_all()
+  const widget = new SystemdManagerSettings()
+  widget.show_all && widget.show_all()
 
   return widget
 }
