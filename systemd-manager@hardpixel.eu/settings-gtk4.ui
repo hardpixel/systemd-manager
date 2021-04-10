@@ -154,7 +154,7 @@
                     </child>
                     <style>
                       <class name="toolbar"/>
-                      <class name="inline-toolbar"/>
+                      <class name="frame"/>
                     </style>
                   </object>
                 </child>
@@ -263,7 +263,7 @@
                     </child>
                     <style>
                       <class name="toolbar"/>
-                      <class name="inline-toolbar"/>
+                      <class name="frame"/>
                     </style>
                   </object>
                 </child>

@@ -2,6 +2,7 @@ const Bytes            = imports.byteArray
 const GLib             = imports.gi.GLib
 const GObject          = imports.gi.GObject
 const Gtk              = imports.gi.Gtk
+const Gdk              = imports.gi.Gdk
 const Gio              = imports.gi.Gio
 const Config           = imports.misc.config
 const ExtensionUtils   = imports.misc.extensionUtils
@@ -20,6 +21,15 @@ var SystemdManagerSettings = GObject.registerClass(
     _init(params) {
       this._settings = Convenience.getSettings()
       super._init(params)
+
+      const provider = new Gtk.CssProvider()
+      provider.load_from_path(`${SystemdExtension.path}/settings.css`)
+
+      Gtk.StyleContext.add_provider_for_display(
+        Gdk.Display.get_default(),
+        provider,
+        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+      )
 
       this._buildable = new Gtk.Builder()
       this._buildable.add_from_file(`${SystemdExtension.path}/${TEMPLATE}`)
