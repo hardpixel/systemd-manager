@@ -8,32 +8,52 @@ function safeSpawn(cmd) {
   try {
     return GLib.spawn_command_line_sync(cmd)
   } catch (e) {
-    return [false, Bytes.fromString('')]
+    return [false, Bytes.fromString(''), null, null]
   }
 }
 
 function command(args, pipe) {
   const cmd = [].concat(args).filter(item => !!item).join(' ')
   const str = pipe ? [cmd, pipe].join(' | ') : cmd
-  const res = safeSpawn(`sh -c "${str}"`)
 
-  return Bytes.toString(res[1])
+  return safeSpawn(`sh -c "${str}"`)
 }
 
 function systemctl(type, args, pipe) {
-  const result = command([`systemctl --${type}`].concat(args), pipe)
-  return result.split('\n').filter(item => !!item)
+  const cmd = [`systemctl --${type}`].concat(args)
+  return command(cmd, pipe)
+}
+
+function systemctlList(type, args) {
+  const res = systemctl(type, args, "awk '{print $1}'")
+  const out = Bytes.toString(res[1])
+
+  return out.split('\n').filter(item => !!item)
 }
 
 function getServicesList(type) {
-  const pipe = "awk '{print $1}'"
   const args = ['--type=service,timer', '--no-legend']
 
-  const res1 = systemctl(type, ['list-unit-files', ...args], pipe)
-  const res2 = systemctl(type, ['list-units', ...args], pipe)
+  const res1 = systemctlList(type, ['list-unit-files', ...args])
+  const res2 = systemctlList(type, ['list-units', ...args])
   const list = res1.concat(res2)
 
   return list.sort((first, second) => {
     return first.toLowerCase().localeCompare(second.toLowerCase())
   })
+}
+
+function isServiceActive(type, service) {
+  const [_, _out, _err, stat] = systemctl(type, ['is-active', service])
+  return stat == 0
+}
+
+function runServiceAction(method, action, type, service) {
+  let cmd = `systemctl ${action} ${service} --${type}`
+
+  if (method == 0 && type == 'system') {
+    cmd = `pkexec --user root ${cmd}`
+  }
+
+  GLib.spawn_command_line_async(`sh -c "${cmd} exit"`)
 }

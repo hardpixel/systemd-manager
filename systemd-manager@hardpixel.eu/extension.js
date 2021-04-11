@@ -1,117 +1,68 @@
-const GLib             = imports.gi.GLib
-const GObject          = imports.gi.GObject
-const Main             = imports.ui.main
-const PanelMenu        = imports.ui.panelMenu
-const PopupMenu        = imports.ui.popupMenu
-const St               = imports.gi.St
-const Util             = imports.misc.util
-const ExtensionUtils   = imports.misc.extensionUtils
-const SystemdExtension = ExtensionUtils.getCurrentExtension()
-const Convenience      = SystemdExtension.imports.convenience
-const PopupServiceItem = SystemdExtension.imports.popupServiceItem.PopupServiceItem
-const Utils            = SystemdExtension.imports.utils
-
-const VERSION = Utils.VERSION
+const GObject           = imports.gi.GObject
+const Main              = imports.ui.main
+const PanelMenu         = imports.ui.panelMenu
+const PopupMenu         = imports.ui.popupMenu
+const St                = imports.gi.St
+const SystemdExtension  = imports.misc.extensionUtils.getCurrentExtension()
+const Convenience       = SystemdExtension.imports.convenience
+const PopupServiceItem  = SystemdExtension.imports.widgets.PopupServiceItem
+const PopupSettingsItem = SystemdExtension.imports.widgets.PopupSettingsItem
+const Utils             = SystemdExtension.imports.utils
 
 const SystemdManager = GObject.registerClass(
   class SystemdManager extends PanelMenu.Button {
     _init() {
-      this._entries  = []
       this._settings = Convenience.getSettings()
-      this._settings.connect('changed', () => this._loadConfig())
+      this._settings.connect('changed', () => this._refresh())
 
       super._init(0.0, null, false)
 
-      this.icon = new St.Icon({
+      const icon = new St.Icon({
         icon_name:   'system-run-symbolic',
         style_class: 'system-status-icon'
       })
 
-      this.add_actor(this.icon)
+      this.add_actor(icon)
       this.menu.connect('open-state-changed', () => this._refresh())
 
-      this._loadConfig()
       this._refresh()
-    }
-
-    _getCommand(service, action, type) {
-      let method  = this._settings.get_enum('command-method')
-      let command = `systemctl ${action} ${service} --${type}`
-
-      if ((type == 'system' && action != 'is-active') && method == 0)
-        command = `pkexec --user root ${command}`
-
-      return `sh -c "${command} exit"`
     }
 
     _refresh() {
       this.menu.removeAll()
 
-      let showAdd     = this._settings.get_boolean('show-add')
-      let showRestart = this._settings.get_boolean('show-restart')
+      const entries     = this._settings.get_strv('systemd')
+      const showAdd     = this._settings.get_boolean('show-add')
+      const showRestart = this._settings.get_boolean('show-restart')
+      const cmdMethod   = this._settings.get_enum('command-method')
 
-      this._entries.forEach(service => {
-        let cmd = this._getCommand(service.service, 'is-active', service.type)
-        let [_, out, err, stat] = GLib.spawn_command_line_sync(cmd)
+      entries.forEach(data => {
+        const entry  = JSON.parse(data)
+        const active = Utils.isServiceActive(entry.type, entry.service)
+        const widget = new PopupServiceItem(entry.name, active, showRestart)
 
-        let active = stat == 0
+        this.menu.addMenuItem(widget)
 
-        let serviceItem = new PopupServiceItem(service.name, active, {
-          restartButton: showRestart
+        widget.connect('toggled', () => {
+          const action = active ? 'stop' : 'start'
+          Utils.runServiceAction(cmdMethod, action, entry.type, entry.service)
         })
 
-        this.menu.addMenuItem(serviceItem.widget)
-
-        serviceItem.widget.connect('toggled', () => {
-          let act = active ? 'stop' : 'start'
-          let cmd = this._getCommand(service.service, act, service.type)
-
-          GLib.spawn_command_line_async(cmd)
-        })
-
-        if (serviceItem.restartButton) {
-          serviceItem.restartButton.connect('clicked', () => {
-            let cmd = this._getCommand(service.service, 'restart', service.type)
-            GLib.spawn_command_line_async(cmd)
-
-            this.menu.close()
-          })
-        }
-      })
-
-      if (showAdd) {
-        if (this._entries.length > 0) {
-          let separator = new PopupMenu.PopupSeparatorMenuItem()
-          this.menu.addMenuItem(separator)
-        }
-
-        let item = new PopupMenu.PopupMenuItem('Add services')
-        this.menu.addMenuItem(item)
-
-        item.connect('activate', () => {
-          if (VERSION >= 36) {
-            ExtensionUtils.openPrefs()
-          } else if (VERSION > 34) {
-            Util.spawn(['gnome-extensions', 'prefs', SystemdExtension.uuid])
-          } else {
-            Util.spawn(['gnome-shell-extension-prefs', SystemdExtension.uuid])
-          }
-
+        widget.connect('restarted', () => {
+          Utils.runServiceAction(cmdMethod, 'restart', entry.type, entry.service)
           this.menu.close()
         })
-      }
-    }
-
-    _loadConfig() {
-      let entries   = this._settings.get_strv('systemd')
-      this._entries = []
-
-      entries.forEach(entryData => {
-        let entry  = JSON.parse(entryData)
-        entry.type = entry.type || 'system'
-
-        this._entries.push(entry)
       })
+
+      if (showAdd && entries.length > 0) {
+        const separator = new PopupMenu.PopupSeparatorMenuItem()
+        this.menu.addMenuItem(separator)
+      }
+
+      if (showAdd) {
+        const settings = new PopupSettingsItem('Add services')
+        this.menu.addMenuItem(settings)
+      }
     }
   }
 )
