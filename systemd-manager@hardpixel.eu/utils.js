@@ -1,5 +1,8 @@
-const Bytes = imports.byteArray
-const GLib  = imports.gi.GLib
+const Bytes  = imports.byteArray
+const GLib   = imports.gi.GLib
+const Config = imports.misc.config
+
+var VERSION = parseInt(Config.PACKAGE_VERSION.replace(/^3\./, '').split('.')[0])
 
 function safeSpawn(cmd) {
   try {

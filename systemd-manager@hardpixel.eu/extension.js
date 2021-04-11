@@ -4,14 +4,14 @@ const Main             = imports.ui.main
 const PanelMenu        = imports.ui.panelMenu
 const PopupMenu        = imports.ui.popupMenu
 const St               = imports.gi.St
-const Config           = imports.misc.config
 const Util             = imports.misc.util
 const ExtensionUtils   = imports.misc.extensionUtils
 const SystemdExtension = ExtensionUtils.getCurrentExtension()
 const Convenience      = SystemdExtension.imports.convenience
 const PopupServiceItem = SystemdExtension.imports.popupServiceItem.PopupServiceItem
+const Utils            = SystemdExtension.imports.utils
 
-const VERSION = parseInt(Config.PACKAGE_VERSION.split('.')[1])
+const VERSION = Utils.VERSION
 
 const SystemdManager = GObject.registerClass(
   class SystemdManager extends PanelMenu.Button {
@@ -89,7 +89,7 @@ const SystemdManager = GObject.registerClass(
         this.menu.addMenuItem(item)
 
         item.connect('activate', () => {
-          if (ExtensionUtils.openPrefs) {
+          if (VERSION >= 36) {
             ExtensionUtils.openPrefs()
           } else if (VERSION > 34) {
             Util.spawn(['gnome-extensions', 'prefs', SystemdExtension.uuid])

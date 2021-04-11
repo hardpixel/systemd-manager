@@ -10,7 +10,7 @@ const SystemdExtension = ExtensionUtils.getCurrentExtension()
 const Convenience      = SystemdExtension.imports.convenience
 const Utils            = SystemdExtension.imports.utils
 
-const VERSION  = parseInt(Config.PACKAGE_VERSION.replace(/^3\./, '').split('.')[0])
+const VERSION  = Utils.VERSION
 const TEMPLATE = VERSION < 40 ? 'settings-gtk3.ui' : 'settings-gtk4.ui'
 
 const SERVICE_TYPES   = ['system', 'user']
