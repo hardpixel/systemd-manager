@@ -46,7 +46,6 @@
       <object class="GtkBox" id="services_prefs">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
-        <property name="valign">start</property>
         <property name="margin-start">20</property>
         <property name="margin-end">20</property>
         <property name="margin-top">20</property>
@@ -79,47 +78,55 @@
                 <property name="can-focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkTreeView" id="services_list">
+                  <object class="GtkScrolledWindow">
+                    <property name="width-request">500</property>
+                    <property name="height-request">200</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
-                    <property name="model">services_list_model</property>
-                    <property name="activate-on-single-click">True</property>
-                    <child internal-child="selection">
-                      <object class="GtkTreeSelection"/>
-                    </child>
                     <child>
-                      <object class="GtkTreeViewColumn" id="tree_label_col">
-                        <property name="title" translatable="yes">Label</property>
-                        <property name="expand">True</property>
-                        <child>
-                          <object class="GtkCellRendererText" id="tree_label_cell"/>
-                          <attributes>
-                            <attribute name="text">0</attribute>
-                          </attributes>
+                      <object class="GtkTreeView" id="services_list">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="model">services_list_model</property>
+                        <property name="activate-on-single-click">True</property>
+                        <child internal-child="selection">
+                          <object class="GtkTreeSelection" id="services_selection"/>
                         </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkTreeViewColumn" id="tree_service_col">
-                        <property name="title" translatable="yes">Service</property>
-                        <property name="expand">True</property>
                         <child>
-                          <object class="GtkCellRendererText" id="tree_service_cell"/>
-                          <attributes>
-                            <attribute name="text">1</attribute>
-                          </attributes>
+                          <object class="GtkTreeViewColumn" id="tree_label_col">
+                            <property name="title" translatable="yes">Label</property>
+                            <property name="expand">True</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="tree_label_cell"/>
+                              <attributes>
+                                <attribute name="text">0</attribute>
+                              </attributes>
+                            </child>
+                          </object>
                         </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkTreeViewColumn" id="tree_type_col">
-                        <property name="title" translatable="yes">Type</property>
-                        <property name="expand">True</property>
                         <child>
-                          <object class="GtkCellRendererText" id="tree_type_cell"/>
-                          <attributes>
-                            <attribute name="text">2</attribute>
-                          </attributes>
+                          <object class="GtkTreeViewColumn" id="tree_service_col">
+                            <property name="title" translatable="yes">Service</property>
+                            <property name="expand">True</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="tree_service_cell"/>
+                              <attributes>
+                                <attribute name="text">1</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="tree_type_col">
+                            <property name="title" translatable="yes">Type</property>
+                            <property name="expand">True</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="tree_type_cell"/>
+                              <attributes>
+                                <attribute name="text">2</attribute>
+                              </attributes>
+                            </child>
+                          </object>
                         </child>
                       </object>
                     </child>
@@ -217,7 +224,7 @@
             </child>
           </object>
           <packing>
-            <property name="expand">False</property>
+            <property name="expand">True</property>
             <property name="fill">True</property>
             <property name="position">0</property>
           </packing>
