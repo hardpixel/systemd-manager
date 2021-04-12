@@ -1,4 +1,7 @@
 # Systemd Manager
+Gnome Shell extension to manage systemd services
+
+## About
 Systemd Manager is a Gnome Shell Extension which allows you to start/stop systemd services via a menu in the status area in the top panel. You can preselect which services should be shown in the extension preferences dialog.
 
 ![Screenshot](https://raw.githubusercontent.com/hardpixel/systemd-manager/master/screenshot.png)
