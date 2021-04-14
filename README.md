@@ -9,6 +9,9 @@ Systemd Manager is a Gnome Shell Extension which allows you to start/stop system
 ## Install
 Copy folder `systemd-manager@hardpixel.eu` into `~/.local/share/gnome-shell/extensions`.
 
+### Packages
+Arch Linux: [AUR package](https://aur.archlinux.org/packages/gnome-shell-extension-systemd-manager)
+
 ## Authorization
 Done via a password prompt from the command `pkexec` of the polkit package. This command usually pops up a graphical password prompt.
 
@@ -24,8 +27,11 @@ You can also choose to use `systemctl` natively and bypass a password prompt. To
 
 Feel free to change the `wheel` group noted in the file to any other group that you see fit.
 
+## Contributing
+Bug reports and pull requests are welcome on GitHub at https://github.com/hardpixel/systemd-manager.
+
 ## License
-[GPLv3](http://www.gnu.org/licenses/gpl-3.0.en.html)
+Systemd Manager is available as open source under the terms of the [GPLv3](http://www.gnu.org/licenses/gpl-3.0.en.html)
 
 ## Credits
 Fork of the Gnome Shell extension [Services Systemd](https://github.com/petres/gnome-shell-extension-services-systemd/).
