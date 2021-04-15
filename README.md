@@ -1,5 +1,5 @@
 # Systemd Manager
-Gnome Shell extension to manage systemd services
+Gnome Shell extension to manage systemd services.
 
 ## About
 Systemd Manager is a Gnome Shell Extension which allows you to start/stop systemd services via a menu in the status area in the top panel. You can preselect which services should be shown in the extension preferences dialog.
@@ -8,6 +8,9 @@ Systemd Manager is a Gnome Shell Extension which allows you to start/stop system
 
 ## Install
 Copy folder `systemd-manager@hardpixel.eu` into `~/.local/share/gnome-shell/extensions`.
+
+### Gnome Shell Extensions
+The easiest way to install this extension is via the official [Gnome Shell Extensions](https://extensions.gnome.org) resource page [here](https://extensions.gnome.org/extension/4174/systemd-manager).
 
 ### Packages
 Arch Linux: [AUR package](https://aur.archlinux.org/packages/gnome-shell-extension-systemd-manager)
