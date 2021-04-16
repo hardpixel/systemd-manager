@@ -22,14 +22,16 @@ var SystemdManagerSettings = GObject.registerClass(
       this._settings = Convenience.getSettings()
       super._init(params)
 
-      const provider = new Gtk.CssProvider()
-      provider.load_from_path(`${SystemdExtension.path}/settings.css`)
+      if (VERSION >= 40) {
+        const provider = new Gtk.CssProvider()
+        provider.load_from_path(`${SystemdExtension.path}/settings.css`)
 
-      Gtk.StyleContext.add_provider_for_display(
-        Gdk.Display.get_default(),
-        provider,
-        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-      )
+        Gtk.StyleContext.add_provider_for_display(
+          Gdk.Display.get_default(),
+          provider,
+          Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
+      }
 
       this._buildable = new Gtk.Builder()
       this._buildable.add_from_file(`${SystemdExtension.path}/${TEMPLATE}`)
