@@ -3,11 +3,11 @@ const Main              = imports.ui.main
 const PanelMenu         = imports.ui.panelMenu
 const PopupMenu         = imports.ui.popupMenu
 const St                = imports.gi.St
-const SystemdExtension  = imports.misc.extensionUtils.getCurrentExtension()
-const Convenience       = SystemdExtension.imports.convenience
-const PopupServiceItem  = SystemdExtension.imports.widgets.PopupServiceItem
-const PopupSettingsItem = SystemdExtension.imports.widgets.PopupSettingsItem
-const Utils             = SystemdExtension.imports.utils
+const Me                = imports.misc.extensionUtils.getCurrentExtension()
+const Convenience       = Me.imports.convenience
+const PopupServiceItem  = Me.imports.widgets.PopupServiceItem
+const PopupSettingsItem = Me.imports.widgets.PopupSettingsItem
+const Utils             = Me.imports.utils
 
 const SystemdManager = GObject.registerClass(
   class SystemdManager extends PanelMenu.Button {

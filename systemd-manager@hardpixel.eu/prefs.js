@@ -1,14 +1,14 @@
-const Bytes            = imports.byteArray
-const GLib             = imports.gi.GLib
-const GObject          = imports.gi.GObject
-const Gtk              = imports.gi.Gtk
-const Gdk              = imports.gi.Gdk
-const Gio              = imports.gi.Gio
-const Config           = imports.misc.config
-const ExtensionUtils   = imports.misc.extensionUtils
-const SystemdExtension = ExtensionUtils.getCurrentExtension()
-const Convenience      = SystemdExtension.imports.convenience
-const Utils            = SystemdExtension.imports.utils
+const Bytes          = imports.byteArray
+const GLib           = imports.gi.GLib
+const GObject        = imports.gi.GObject
+const Gtk            = imports.gi.Gtk
+const Gdk            = imports.gi.Gdk
+const Gio            = imports.gi.Gio
+const Config         = imports.misc.config
+const ExtensionUtils = imports.misc.extensionUtils
+const Me             = ExtensionUtils.getCurrentExtension()
+const Convenience    = Me.imports.convenience
+const Utils          = Me.imports.utils
 
 const VERSION  = Utils.VERSION
 const TEMPLATE = VERSION < 40 ? 'settings-gtk3.ui' : 'settings-gtk4.ui'
@@ -24,7 +24,7 @@ var SystemdManagerSettings = GObject.registerClass(
 
       if (VERSION >= 40) {
         const provider = new Gtk.CssProvider()
-        provider.load_from_path(`${SystemdExtension.path}/settings.css`)
+        provider.load_from_path(`${Me.path}/settings.css`)
 
         Gtk.StyleContext.add_provider_for_display(
           Gdk.Display.get_default(),
@@ -34,7 +34,7 @@ var SystemdManagerSettings = GObject.registerClass(
       }
 
       this._buildable = new Gtk.Builder()
-      this._buildable.add_from_file(`${SystemdExtension.path}/${TEMPLATE}`)
+      this._buildable.add_from_file(`${Me.path}/${TEMPLATE}`)
 
       this._container = this.getObject('prefs_widget')
 

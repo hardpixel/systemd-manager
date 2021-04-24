@@ -1,10 +1,10 @@
-const St               = imports.gi.St
-const GObject          = imports.gi.GObject
-const PopupMenu        = imports.ui.popupMenu
-const Util             = imports.misc.util
-const ExtensionUtils   = imports.misc.extensionUtils
-const SystemdExtension = ExtensionUtils.getCurrentExtension()
-const VERSION          = SystemdExtension.imports.utils.VERSION
+const St             = imports.gi.St
+const GObject        = imports.gi.GObject
+const PopupMenu      = imports.ui.popupMenu
+const Util           = imports.misc.util
+const ExtensionUtils = imports.misc.extensionUtils
+const Me             = ExtensionUtils.getCurrentExtension()
+const VERSION        = Me.imports.utils.VERSION
 
 var PopupServiceItem = GObject.registerClass({
   Signals: {
@@ -46,9 +46,9 @@ var PopupSettingsItem = GObject.registerClass(
         if (VERSION >= 36) {
           ExtensionUtils.openPrefs()
         } else if (VERSION > 34) {
-          Util.spawn(['gnome-extensions', 'prefs', SystemdExtension.uuid])
+          Util.spawn(['gnome-extensions', 'prefs', Me.uuid])
         } else {
-          Util.spawn(['gnome-shell-extension-prefs', SystemdExtension.uuid])
+          Util.spawn(['gnome-shell-extension-prefs', Me.uuid])
         }
       })
     }
