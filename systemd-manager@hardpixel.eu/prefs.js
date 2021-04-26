@@ -102,6 +102,14 @@ var SystemdManagerSettings = GObject.registerClass(
       dialog.show()
     }
 
+    trimParameter(name) {
+      if (name.includes('@')) {
+        return name.split('@')[0] + '@.service'
+      } else {
+        return name
+      }
+    }
+
     isValidService(name) {
       return this.availableServices.all.includes(name)
     }
@@ -225,14 +233,15 @@ var SystemdManagerSettings = GObject.registerClass(
 
       const name    = nameEntry.get_text().trim()
       const service = unitEntry.get_text().trim()
-      const type    = this.getServiceType(service)
+      const serviceFileName = this.trimParameter(service)
+      const type    = this.getServiceType(serviceFileName)
 
       if (!name.length || !service.length) {
         this.showWarning('No label and/or service specified')
         return
       }
 
-      if (!this.isValidService(service) || !type) {
+      if (!this.isValidService(serviceFileName) || !type) {
         this.showWarning('Service does not exist')
         return
       }
