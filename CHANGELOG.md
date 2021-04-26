@@ -1,5 +1,21 @@
 # Changelog
 
+## [v4](https://github.com/hardpixel/systemd-manager/tree/v4) (2021-04-26)
+
+[Full Changelog](https://github.com/hardpixel/systemd-manager/compare/v3...v4)
+
+**Implemented enhancements:**
+
+- Cannot use parameterized services [\#2](https://github.com/hardpixel/systemd-manager/issues/2)
+
+**Merged pull requests:**
+
+- add support for parameterized services [\#3](https://github.com/hardpixel/systemd-manager/pull/3) ([Haringat](https://github.com/Haringat))
+
+## [v3](https://github.com/hardpixel/systemd-manager/tree/v3) (2021-04-18)
+
+[Full Changelog](https://github.com/hardpixel/systemd-manager/compare/v2...v3)
+
 ## [v2](https://github.com/hardpixel/systemd-manager/tree/v2) (2021-04-16)
 
 [Full Changelog](https://github.com/hardpixel/systemd-manager/compare/v1...v2)
