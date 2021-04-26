@@ -102,16 +102,27 @@ var SystemdManagerSettings = GObject.registerClass(
       dialog.show()
     }
 
+    trimParameter(name) {
+      if (name.includes('@')) {
+        return name.split('@')[0] + '@.service'
+      } else {
+        return name
+      }
+    }
+
     isValidService(name) {
-      return this.availableServices.all.includes(name)
+      const service = this.trimParameter(name)
+      return this.availableServices.all.includes(service)
     }
 
     getServiceType(name) {
-      if (this.availableServices.system.includes(name)) {
+      const service = this.trimParameter(name)
+
+      if (this.availableServices.system.includes(service)) {
         return 'system'
       }
 
-      if (this.availableServices.user.includes(name)) {
+      if (this.availableServices.user.includes(service)) {
         return 'user'
       }
     }
