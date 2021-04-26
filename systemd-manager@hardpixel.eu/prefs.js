@@ -111,15 +111,18 @@ var SystemdManagerSettings = GObject.registerClass(
     }
 
     isValidService(name) {
-      return this.availableServices.all.includes(name)
+      const service = this.trimParameter(name)
+      return this.availableServices.all.includes(service)
     }
 
     getServiceType(name) {
-      if (this.availableServices.system.includes(name)) {
+      const service = this.trimParameter(name)
+
+      if (this.availableServices.system.includes(service)) {
         return 'system'
       }
 
-      if (this.availableServices.user.includes(name)) {
+      if (this.availableServices.user.includes(service)) {
         return 'user'
       }
     }
@@ -233,15 +236,14 @@ var SystemdManagerSettings = GObject.registerClass(
 
       const name    = nameEntry.get_text().trim()
       const service = unitEntry.get_text().trim()
-      const serviceFileName = this.trimParameter(service)
-      const type    = this.getServiceType(serviceFileName)
+      const type    = this.getServiceType(service)
 
       if (!name.length || !service.length) {
         this.showWarning('No label and/or service specified')
         return
       }
 
-      if (!this.isValidService(serviceFileName) || !type) {
+      if (!this.isValidService(service) || !type) {
         this.showWarning('Service does not exist')
         return
       }
