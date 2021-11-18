@@ -55,5 +55,5 @@ function runServiceAction(method, action, type, service) {
     cmd = `pkexec --user root ${cmd}`
   }
 
-  GLib.spawn_command_line_async(`sh -c "${cmd} exit"`)
+  GLib.spawn_command_line_async(`sh -c "${cmd}; exit"`)
 }
