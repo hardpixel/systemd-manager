@@ -26,7 +26,7 @@ The policy file [org.freedesktop.policykit.pkexec.systemctl.policy](systemd-poli
 confirmation. Copy the file in your polkit policy folder (usually: `/usr/share/polkit-1/actions`).
 
 #### Using systemctl
-You can also choose to use `systemctl` natively and bypass a password prompt. To do this, add the policy file [10-service_status.rules](10-service_status.rules) to `/etc/polkit-1/rules.d`.
+You can also choose to use `systemctl` natively and bypass a password prompt. To do this, add the policy file [10-service_status.rules](systemd-policies/10-service_status.rules) to `/etc/polkit-1/rules.d`.
 
 Feel free to change the `wheel` group noted in the file to any other group that you see fit.
 
