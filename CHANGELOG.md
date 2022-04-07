@@ -1,5 +1,13 @@
 # Changelog
 
+## [v6](https://github.com/hardpixel/systemd-manager/tree/v6) (2022-04-07)
+
+[Full Changelog](https://github.com/hardpixel/systemd-manager/compare/v5...v6)
+
+**Merged pull requests:**
+
+- Seperate commands in shell call [\#5](https://github.com/hardpixel/systemd-manager/pull/5) ([hashworks](https://github.com/hashworks))
+
 ## [v5](https://github.com/hardpixel/systemd-manager/tree/v5) (2021-09-10)
 
 [Full Changelog](https://github.com/hardpixel/systemd-manager/compare/v4...v5)
