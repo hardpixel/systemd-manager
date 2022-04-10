@@ -32,7 +32,7 @@ function systemctlList(type, args) {
 }
 
 function getServicesList(type) {
-  const args = ['--type=service,timer', '--no-legend']
+  const args = ['--type=service,timer,mount', '--no-legend']
 
   const res1 = systemctlList(type, ['list-unit-files', ...args])
   const res2 = systemctlList(type, ['list-units', ...args])
