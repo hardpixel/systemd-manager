@@ -53,6 +53,7 @@ var SystemdManagerSettings = GObject.registerClass(
       this.connectEvent('service_down', 'clicked', this._onServiceMoveDown)
       this.connectEvent('service_remove', 'clicked', this._onServiceRemove)
       this.connectEvent('service_add', 'clicked', this._onServiceAdd)
+      this.connectEvent('services_add_completion', 'match-selected', this._onServiceComplete)
 
       this.updateAvailableServices()
       this.updateServicesList()
@@ -117,6 +118,12 @@ var SystemdManagerSettings = GObject.registerClass(
 
     getServiceType(name) {
       const service = this.trimParameter(name)
+      const newType = this._newEntryType
+      const newList = newType && this.availableServices[newType]
+
+      if (newList && newList.includes(service)) {
+        return newType
+      }
 
       if (this.availableServices.system.includes(service)) {
         return 'system'
@@ -230,6 +237,10 @@ var SystemdManagerSettings = GObject.registerClass(
       store.remove(iter)
     }
 
+    _onServiceComplete(comp, model, iter) {
+      this._newEntryType = model.get_value(iter, 1)
+    }
+
     _onServiceAdd() {
       const nameEntry = this.getObject('add_service_label')
       const unitEntry = this.getObject('add_service_unit')
@@ -263,6 +274,8 @@ var SystemdManagerSettings = GObject.registerClass(
 
       nameEntry.set_text('')
       unitEntry.set_text('')
+
+      this._newEntryType = null
     }
   }
 )
