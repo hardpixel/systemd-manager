@@ -1,5 +1,18 @@
 # Changelog
 
+## [v7](https://github.com/hardpixel/systemd-manager/tree/v7) (2022-04-10)
+
+[Full Changelog](https://github.com/hardpixel/systemd-manager/compare/v6...v7)
+
+**Fixed bugs:**
+
+- Selecting user service results in system service being selected. [\#9](https://github.com/hardpixel/systemd-manager/issues/9)
+
+**Closed issues:**
+
+- Add ability to manage .mount units [\#10](https://github.com/hardpixel/systemd-manager/issues/10)
+- Error: Tried to construct an object without a GType [\#4](https://github.com/hardpixel/systemd-manager/issues/4)
+
 ## [v6](https://github.com/hardpixel/systemd-manager/tree/v6) (2022-04-07)
 
 [Full Changelog](https://github.com/hardpixel/systemd-manager/compare/v5...v6)
