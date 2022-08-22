@@ -6,6 +6,11 @@
   min-height: 18px;
 }
 
+.systemd-manager-error {
+  color: #e01b24;
+  font-weight: bold;
+}
+
 .systemd-manager-item .toggle-switch {
   margin-left: 10px;
 }

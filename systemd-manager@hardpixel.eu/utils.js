@@ -43,12 +43,12 @@ function getServicesList(type) {
   })
 }
 
-function isServiceActive(type, services) {
+function getServicesState(type, services) {
   const res = systemctl(type, ['is-active', ...services])
   const out = Bytes.toString(res[1])
 
   return out.split('\n').reduce(
-    (all, value, idx) => ({ ...all, [services[idx]]: value == 'active' }), {}
+    (all, value, idx) => ({ ...all, [services[idx]]: value }), {}
   )
 }
 
