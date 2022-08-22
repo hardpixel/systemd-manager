@@ -40,20 +40,29 @@ const SystemdManager = GObject.registerClass(
       const showRestart = this._settings.get_boolean('show-restart')
       const cmdMethod   = this._settings.get_enum('command-method')
 
-      entries.forEach(data => {
-        const entry  = JSON.parse(data)
-        const active = Utils.isServiceActive(entry.type, entry.service)
-        const widget = new PopupServiceItem(entry.name, active, showRestart)
+      const services    = entries.map(data => JSON.parse(data))
+      const fetchStates = type => Utils.isServiceActive(
+        type, services.filter(ob => ob.type == type).map(ob => ob.service)
+      )
+
+      const stateTypes  = ['system', 'user']
+      const activeState = stateTypes.reduce(
+        (all, type) => ({ ...all, [type]: fetchStates(type) }), {}
+      )
+
+      services.forEach(({ type, name, service }) => {
+        const active = activeState[type][service]
+        const widget = new PopupServiceItem(name, active, showRestart)
 
         this.menu.addMenuItem(widget)
 
         widget.connect('toggled', () => {
           const action = active ? 'stop' : 'start'
-          Utils.runServiceAction(cmdMethod, action, entry.type, entry.service)
+          Utils.runServiceAction(cmdMethod, action, type, service)
         })
 
         widget.connect('restarted', () => {
-          Utils.runServiceAction(cmdMethod, 'restart', entry.type, entry.service)
+          Utils.runServiceAction(cmdMethod, 'restart', type, service)
           this.menu.close()
         })
       })
