@@ -40,7 +40,7 @@ var PopupServiceItem = GObject.registerClass({
 var PopupSettingsItem = GObject.registerClass(
   class PopupSettingsItem extends PopupMenu.PopupMenuItem {
     _init(text) {
-      super._init(text)
+      super._init(text, { style_class: 'systemd-manager-item' })
 
       this.connect('activate', () => {
         if (VERSION >= 36) {

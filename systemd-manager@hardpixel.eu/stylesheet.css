@@ -7,3 +7,7 @@
 .systemd-manager-item .toggle-switch {
   margin-left: 10px;
 }
+
+.systemd-manager-item .popup-menu-ornament {
+  width: 0px !important;
+}
