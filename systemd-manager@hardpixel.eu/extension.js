@@ -23,12 +23,16 @@ const SystemdManager = GObject.registerClass(
       })
 
       this.add_actor(icon)
-      this.menu.connect('open-state-changed', () => this._refresh())
+      this.refresh()
 
-      this._refresh()
+      this.menu.connect('open-state-changed', () => {
+        if (this.menu.isOpen) {
+          this.refresh()
+        }
+      })
     }
 
-    _refresh() {
+    refresh() {
       this.menu.removeAll()
 
       const entries     = this._settings.get_strv('systemd')
