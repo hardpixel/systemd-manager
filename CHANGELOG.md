@@ -1,5 +1,13 @@
 # Changelog
 
+## [v8](https://github.com/hardpixel/systemd-manager/tree/v8) (2022-08-22)
+
+[Full Changelog](https://github.com/hardpixel/systemd-manager/compare/v7...v8)
+
+**Implemented enhancements:**
+
+- No indication of service being started [\#11](https://github.com/hardpixel/systemd-manager/issues/11)
+
 ## [v7](https://github.com/hardpixel/systemd-manager/tree/v7) (2022-04-10)
 
 [Full Changelog](https://github.com/hardpixel/systemd-manager/compare/v6...v7)
