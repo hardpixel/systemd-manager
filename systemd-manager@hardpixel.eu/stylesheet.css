@@ -2,6 +2,8 @@
   padding: 3px;
   border: 1px solid rgba(0, 0, 0, 0.5);
   border-radius: 100px;
+  min-width: 18px;
+  min-height: 18px;
 }
 
 .systemd-manager-item .toggle-switch {
