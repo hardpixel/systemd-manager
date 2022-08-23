@@ -15,7 +15,7 @@ const SystemdManager = GObject.registerClass(
       this._settings = Convenience.getSettings()
       this._settings.connect('changed', () => this._refresh())
 
-      super._init(0.0, null, false)
+      super._init(0.2, null, false)
 
       const icon = new St.Icon({
         icon_name:   'system-run-symbolic',
