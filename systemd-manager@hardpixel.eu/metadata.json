@@ -4,7 +4,7 @@
   "url": "https://github.com/hardpixel/systemd-manager",
   "settings-schema": "org.gnome.shell.extensions.systemd-manager",
   "gettext-domain": "systemd-manager",
-  "version": 10,
+  "version": 11,
   "name": "Systemd Manager",
   "description": "Toggle systemd services on/off from a popup menu in the top gnome panel. Can be used to start services like apache2, mysql, postgres. It uses `pkexec' to run `sytemctl'. If you want to start services without entering a password you have to polkit policy file. An example policy file can be found in the github repository."
 }
