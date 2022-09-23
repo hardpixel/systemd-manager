@@ -284,6 +284,38 @@ function init() {
   Convenience.initTranslations()
 }
 
+function fillPreferencesWindow(window) {
+  const { Adw } = imports.gi
+
+  const pages  = [
+    { name: 'services', icon: 'system-run-symbolic' },
+    { name: 'settings', icon: 'preferences-system-symbolic' }
+  ]
+
+  const widget = new SystemdManagerSettings()
+
+  pages.forEach(({ name, icon }) => {
+    const page  = Adw.PreferencesPage.new()
+    const group = Adw.PreferencesGroup.new()
+
+    const label = widget.getObject(`${name}_label`)
+    const prefs = widget.getObject(`${name}_prefs`)
+
+    page.set_name(name)
+    page.set_title(label.get_text())
+    page.set_icon_name(icon)
+
+    prefs.unparent()
+    group.add(prefs)
+
+    page.add(group)
+    window.add(page)
+  })
+
+  window.set_default_size(620, 680)
+  widget.unrealize()
+}
+
 function buildPrefsWidget() {
   const widget = new SystemdManagerSettings()
   widget.show_all && widget.show_all()
