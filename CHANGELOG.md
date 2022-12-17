@@ -1,5 +1,13 @@
 # Changelog
 
+## [v12](https://github.com/hardpixel/systemd-manager/tree/v12) (2022-12-17)
+
+[Full Changelog](https://github.com/hardpixel/systemd-manager/compare/v11...v12)
+
+**Added masking functionality:**
+
+- Added two buttons that allow for masking and unmasking a service 
+
 ## [v11](https://github.com/hardpixel/systemd-manager/tree/v11) (2022-09-23)
 
 [Full Changelog](https://github.com/hardpixel/systemd-manager/compare/v10...v11)
