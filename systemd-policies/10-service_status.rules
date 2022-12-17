@@ -1,7 +1,7 @@
 polkit.addRule(function(action, subject) {
     if (action.id == "org.freedesktop.systemd1.manage-units" && subject.isInGroup("wheel") ) {
         var verb = action.lookup("verb");
-        if (verb == "start" || verb == "stop" || verb == "restart" || verb == "enable" || verb == "disable") {
+        if (verb == "start" || verb == "stop" || verb == "restart" || verb == "enable" || verb == "disable" || verb == "mask" || verb == "unmask") {
             return polkit.Result.YES;
         }
     }
