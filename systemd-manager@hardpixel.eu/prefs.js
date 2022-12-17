@@ -47,6 +47,7 @@ var SystemdManagerSettings = GObject.registerClass(
       this.bindBoolean('show-add')
       this.bindBoolean('show-restart')
       this.bindEnum('command-method')
+      this.bindBoolean('show-mask')
 
       this.connectEvent('services_selection', 'changed', this._onServiceSelect)
       this.connectEvent('service_up', 'clicked', this._onServiceMoveUp)

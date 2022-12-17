@@ -38,6 +38,7 @@ const SystemdManager = GObject.registerClass(
       const entries     = this._settings.get_strv('systemd')
       const showAdd     = this._settings.get_boolean('show-add')
       const showRestart = this._settings.get_boolean('show-restart')
+      const showMask = this._settings.get_boolean('show-mask')
       const cmdMethod   = this._settings.get_enum('command-method')
 
       const services    = entries.map(data => JSON.parse(data))
@@ -52,7 +53,7 @@ const SystemdManager = GObject.registerClass(
 
       services.forEach(({ type, name, service }) => {
         const state = unitStates[type][service]
-        const entry = new PopupServiceItem(name, state, showRestart)
+        const entry = new PopupServiceItem(name, state, showRestart, showMask)
 
         this.menu.addMenuItem(entry)
 
@@ -65,6 +66,24 @@ const SystemdManager = GObject.registerClass(
           Utils.runServiceAction(cmdMethod, 'restart', type, service)
           this.menu.close()
         })
+
+        
+        // mask service 
+        entry.connect('masked', () => {
+          Utils.runServiceAction(cmdMethod, 'mask', type, service)
+          this.menu.close()
+          // log('masked successfully')
+          
+        })
+        
+        // unmask state
+        entry.connect('unmasked', () => {
+          Utils.runServiceAction(cmdMethod, 'unmask', type, service)
+          this.menu.close()
+          // log('unmasked successfully')
+          
+        })
+
       })
 
       if (showAdd && entries.length > 0) {

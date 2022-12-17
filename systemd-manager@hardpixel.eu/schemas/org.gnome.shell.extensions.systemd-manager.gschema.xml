@@ -28,5 +28,11 @@
       <default>"pkexec"</default>
       <summary>The method to use to manage services</summary>
     </key>
+
+    <key type="b" name="show-mask">
+      <default>false</default>
+      <summary>Show the mask button for each service</summary>
+      <description>Whether to show the mask buttons for each service.</description>
+    </key>
   </schema>
 </schemalist>

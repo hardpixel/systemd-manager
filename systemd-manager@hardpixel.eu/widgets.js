@@ -13,16 +13,21 @@ const LOADING_STATES = ['reloading', 'activating', 'deactivating', 'maintenance'
 
 var PopupServiceItem = GObject.registerClass({
   Signals: {
-    'restarted': {}
+    'restarted': {},
+    'masked': {},
+    'unmasked': {}
   }
 }, class PopupServiceItem extends PopupMenu.PopupSwitchMenuItem {
-    _init(text, state, showRestart) {
+    _init(text, state, showRestart, showMask) {
       const loading  = LOADING_STATES.includes(state)
       const active   = state == 'active'
       const reactive = loading == false
       const failure  = state == 'failed'
 
-      super._init(text, active, { style_class: 'systemd-manager-item' })
+      super._init(text, active, { style_class: 'systemd-manager-item' }, 
+                                { style_class: 'systemd-manager-item' },  
+                                { style_class: 'systemd-manager-item' }
+      )
 
       if (failure) {
         this.label.add_style_class_name('systemd-manager-error')
@@ -59,6 +64,46 @@ var PopupServiceItem = GObject.registerClass({
         button.connect('clicked', () => this.emit('restarted'))
         this.add_child(button)
       }
+
+      if (showMask) {
+        const icon = new St.Icon({
+          icon_name:   'view-mirror-symbolic',
+          style_class: 'popup-menu-icon'
+        })
+
+        const button = new St.Button({
+          x_align:         2,
+          reactive:        reactive,
+          can_focus:       reactive,
+          track_hover:     reactive,
+          accessible_name: 'mask',
+          style_class:     'system-menu-action systemd-manager-button',
+          child:           icon
+        })
+
+        button.connect('clicked', () => this.emit('masked'))
+        this.add_child(button)
+        
+        const icon2 = new St.Icon({
+          icon_name:   'view-restore-symbolic',
+          style_class: 'popup-menu-icon'
+        })
+
+        const button2 = new St.Button({
+          x_align:         3,
+          reactive:        reactive,
+          can_focus:       reactive,
+          track_hover:     reactive,
+          accessible_name: 'mask',
+          style_class:     'system-menu-action systemd-manager-button',
+          child:           icon2
+        })
+
+        button2.connect('clicked', () => this.emit('unmasked'))
+        this.add_child(button2)
+        
+      }
+
     }
   }
 )
