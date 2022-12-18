@@ -30,7 +30,7 @@
     </key>
     
     <key type="b" name="show-mask">
-      <default>false</default>
+      <default>true</default>
       <summary>Show the mask button for each service</summary>
       <description>Whether to show the mask button for each service.</description>
     </key>
