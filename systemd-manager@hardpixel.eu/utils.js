@@ -43,13 +43,20 @@ function getServicesList(type) {
   })
 }
 
-function getServicesState(type, services) {
-  const res = systemctl(type, ['is-active', ...services])
+function getServicesState(type, flag, services) {
+  const res = systemctl(type, [flag, ...services])
   const out = Bytes.toString(res[1])
 
   return out.split('\n').reduce(
     (all, value, idx) => ({ ...all, [services[idx]]: value }), {}
   )
+}
+
+// Deprecated !
+// code taken by (github username:) @jonian 
+function getMaskedServicesList(type){
+  const args = ['--type=service,timer,mount', '--state=masked', '--no-legend']
+  return systemctlList(type, ['list-unit-files', ...args])
 }
 
 function runServiceAction(method, action, type, service) {

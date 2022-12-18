@@ -39,22 +39,30 @@ const SystemdManager = GObject.registerClass(
       const showAdd     = this._settings.get_boolean('show-add')
       const showRestart = this._settings.get_boolean('show-restart')
       const cmdMethod   = this._settings.get_enum('command-method')
+      const showMask    = this._settings.get_boolean('show-mask')
 
       const services    = entries.map(data => JSON.parse(data))
-      const fetchStates = type => Utils.getServicesState(
-        type, services.filter(ob => ob.type == type).map(ob => ob.service)
+      const fetchStates = (type, flag) => Utils.getServicesState(
+        type, flag, services.filter(ob => ob.type == type).map(ob => ob.service)
       )
 
       const stateTypes  = ['system', 'user']
       const unitStates  = stateTypes.reduce(
-        (all, type) => ({ ...all, [type]: fetchStates(type) }), {}
+        (all, type) => ({ ...all, [type]: fetchStates(type, 'is-active') }), {}
+      )
+      
+      // code taken by  (github username:) @jonian
+      const maskedStates = stateTypes.reduce(
+        (all, type) => ({...all, [type]: fetchStates(type, 'is-enabled')}), {}
       )
 
       services.forEach(({ type, name, service }) => {
         const state = unitStates[type][service]
-        const entry = new PopupServiceItem(name, state, showRestart)
+        const maskedState = maskedStates[type][service] == 'masked'
+        const entry = new PopupServiceItem(name, state, showRestart, showMask, maskedState)
 
         this.menu.addMenuItem(entry)
+
 
         entry.connect('toggled', (actor, active) => {
           const action = active ? 'start' : 'stop'
@@ -65,6 +73,14 @@ const SystemdManager = GObject.registerClass(
           Utils.runServiceAction(cmdMethod, 'restart', type, service)
           this.menu.close()
         })
+
+        entry.connect('maskToggle', () => {
+          const action = maskedState ? 'unmask' : 'mask'
+          Utils.runServiceAction(cmdMethod, action, type, service)
+          this.menu.close()
+        })
+        
+
       })
 
       if (showAdd && entries.length > 0) {

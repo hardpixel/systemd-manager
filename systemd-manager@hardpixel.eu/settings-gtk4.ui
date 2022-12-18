@@ -334,6 +334,30 @@
                 </child>
               </object>
             </child>
+
+
+            <child>
+              <object class="GtkBox" id="show_mask_section">
+                <property name="spacing">50</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="can-focus">0</property>
+                    <property name="valign">center</property>
+                    <property name="label" translatable="yes">Show mask button</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkSwitch" id="show_mask">
+                    <property name="hexpand">1</property>
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="active">0</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            
+
             <child>
               <object class="GtkBox" id="command_method_section">
                 <property name="spacing">50</property>

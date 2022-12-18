@@ -9,7 +9,7 @@
     <key type="as" name="systemd">
       <default>[]</default>
       <summary>Systemd service list</summary>
-      <description>A list of serrvice which are shown</description>
+      <description>A list of services which are shown</description>
     </key>
 
     <key type="b" name="show-add">
@@ -27,6 +27,12 @@
     <key name="command-method" enum="org.gnome.shell.extensions.systemd-manager.command-methods">
       <default>"pkexec"</default>
       <summary>The method to use to manage services</summary>
+    </key>
+    
+    <key type="b" name="show-mask">
+      <default>false</default>
+      <summary>Show the mask button for each service</summary>
+      <description>Whether to show the mask button for each service.</description>
     </key>
   </schema>
 </schemalist>

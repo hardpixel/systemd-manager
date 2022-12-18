@@ -13,16 +13,19 @@ const LOADING_STATES = ['reloading', 'activating', 'deactivating', 'maintenance'
 
 var PopupServiceItem = GObject.registerClass({
   Signals: {
-    'restarted': {}
+    'restarted': {},
+    'maskToggle': {}
+    //'toggled': {}
   }
 }, class PopupServiceItem extends PopupMenu.PopupSwitchMenuItem {
-    _init(text, state, showRestart) {
+    _init(text, state, showRestart, showMask, maskedState) {
       const loading  = LOADING_STATES.includes(state)
       const active   = state == 'active'
       const reactive = loading == false
       const failure  = state == 'failed'
+      /* // const maskedState   = state == 'masked' */
 
-      super._init(text, active, { style_class: 'systemd-manager-item' })
+      super._init(text, active, { style_class: 'systemd-manager-item' }, showMask, maskedState)
 
       if (failure) {
         this.label.add_style_class_name('systemd-manager-error')
@@ -59,6 +62,33 @@ var PopupServiceItem = GObject.registerClass({
         button.connect('clicked', () => this.emit('restarted'))
         this.add_child(button)
       }
+
+      // log('showMask in widgets line 68: ' + showMask)
+      if (showMask) {
+        /*const icon = new St.Icon({
+          icon_name:   'view-mirror-symbolic',
+          style_class: 'popup-menu-icon'
+        })
+        */
+        const button = new St.Button({
+          x_align:         2,
+          // the button must be reactive if-f the widget is reactive and the button's service is active !!
+          reactive:        reactive, 
+          can_focus:       reactive,
+          track_hover:     reactive,
+          accessible_name: 'mask',
+          style_class:     'system-menu-action toggle-switch',
+          // child:           icon
+          toggle_mode:     active,
+          checked:         maskedState && active
+        })
+
+        button.connect('clicked', () => this.emit('maskToggle'))
+        this.add_child(button)
+        
+        
+      }
+
     }
   }
 )
