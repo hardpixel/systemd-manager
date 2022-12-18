@@ -1,1 +1,0 @@
-glib-compile-schemas ../schemas/
