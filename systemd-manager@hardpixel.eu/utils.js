@@ -43,8 +43,8 @@ function getServicesList(type) {
   })
 }
 
-function getServicesState(type, services) {
-  const res = systemctl(type, ['is-active', ...services])
+function getServicesState(type, flag, services) {
+  const res = systemctl(type, [flag, ...services])
   const out = Bytes.toString(res[1])
 
   return out.split('\n').reduce(
@@ -52,6 +52,7 @@ function getServicesState(type, services) {
   )
 }
 
+// Deprecated !
 // code taken by (github username:) @jonian 
 function getMaskedServicesList(type){
   const args = ['--type=service,timer,mount', '--state=masked', '--no-legend']
