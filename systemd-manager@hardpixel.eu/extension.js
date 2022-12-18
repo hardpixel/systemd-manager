@@ -38,8 +38,8 @@ const SystemdManager = GObject.registerClass(
       const entries     = this._settings.get_strv('systemd')
       const showAdd     = this._settings.get_boolean('show-add')
       const showRestart = this._settings.get_boolean('show-restart')
-      const showMask = this._settings.get_boolean('show-mask')
       const cmdMethod   = this._settings.get_enum('command-method')
+      const showMask    = this._settings.get_boolean('show-mask')
 
       const services    = entries.map(data => JSON.parse(data))
       const fetchStates = type => Utils.getServicesState(
@@ -50,12 +50,19 @@ const SystemdManager = GObject.registerClass(
       const unitStates  = stateTypes.reduce(
         (all, type) => ({ ...all, [type]: fetchStates(type) }), {}
       )
+      
+      // code taken by  (github username:) @jonian
+      const maskedStates = stateTypes.reduce(
+        (all, type) => ({...all, [type]: Utils.getMaskedServicesList(type)}), {}
+      )
 
       services.forEach(({ type, name, service }) => {
         const state = unitStates[type][service]
-        const entry = new PopupServiceItem(name, state, showRestart, showMask)
+        const maskedState = maskedStates[type].includes(service)
+        const entry = new PopupServiceItem(name, state, showRestart, showMask, maskedState)
 
         this.menu.addMenuItem(entry)
+
 
         entry.connect('toggled', (actor, active) => {
           const action = active ? 'start' : 'stop'
@@ -67,22 +74,13 @@ const SystemdManager = GObject.registerClass(
           this.menu.close()
         })
 
-        
-        // mask service 
-        entry.connect('masked', () => {
-          Utils.runServiceAction(cmdMethod, 'mask', type, service)
+
+        entry.connect('maskToggle', () => {
+          const action = maskedState ? 'unmask' : 'mask'
+          Utils.runServiceAction(cmdMethod, action, type, service)
           this.menu.close()
-          // log('masked successfully')
-          
         })
         
-        // unmask state
-        entry.connect('unmasked', () => {
-          Utils.runServiceAction(cmdMethod, 'unmask', type, service)
-          this.menu.close()
-          // log('unmasked successfully')
-          
-        })
 
       })
 

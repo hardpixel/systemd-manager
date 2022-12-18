@@ -52,6 +52,12 @@ function getServicesState(type, services) {
   )
 }
 
+// code taken by (github username:) @jonian 
+function getMaskedServicesList(type){
+  const args = ['--type=service,timer,mount', '--state=masked', '--no-legend']
+  return systemctlList(type, ['list-unit-files', ...args])
+}
+
 function runServiceAction(method, action, type, service) {
   let cmd = `systemctl ${action} ${service} --${type}`
 
