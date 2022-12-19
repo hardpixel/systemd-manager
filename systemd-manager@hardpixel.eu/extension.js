@@ -46,20 +46,20 @@ const SystemdManager = GObject.registerClass(
         type, flag, services.filter(ob => ob.type == type).map(ob => ob.service)
       )
 
-      const stateTypes  = ['system', 'user']
-      const unitStates  = stateTypes.reduce(
+      const stateTypes    = ['system', 'user']
+      const activeStates  = stateTypes.reduce(
         (all, type) => ({ ...all, [type]: fetchStates(type, 'is-active') }), {}
       )
 
-      const maskedStates = stateTypes.reduce(
+      const enabledStates = stateTypes.reduce(
         (all, type) => ({...all, [type]: fetchStates(type, 'is-enabled')}), {}
       )
 
       services.forEach(({ type, name, service }) => {
-        const state = unitStates[type][service]
-        const maskedState = maskedStates[type][service] == 'masked'
-        const entry = new PopupServiceItem(name, state, showRestart, showMask, maskedState)
+        const isActive  = activeStates[type][service]
+        const isEnabled = enabledStates[type][service]
 
+        const entry = new PopupServiceItem(name, { isActive, isEnabled, showRestart, showMask })
         this.menu.addMenuItem(entry)
 
         entry.connect('toggled', (actor, active) => {
@@ -72,9 +72,10 @@ const SystemdManager = GObject.registerClass(
           this.menu.close()
         })
 
-        entry.connect('mask-toggled', () => {
-          const action = maskedState ? 'unmask' : 'mask'
+        entry.connect('mask-toggled', (actor, masked) => {
+          const action = masked ? 'unmask' : 'mask'
           Utils.runServiceAction(cmdMethod, action, type, service)
+
           this.menu.close()
         })
       })

@@ -14,14 +14,16 @@ const LOADING_STATES = ['reloading', 'activating', 'deactivating', 'maintenance'
 var PopupServiceItem = GObject.registerClass({
   Signals: {
     'restarted': {},
-    'mask-toggled': {}
+    'mask-toggled': { param_types: [GObject.TYPE_BOOLEAN] }
   }
 }, class PopupServiceItem extends PopupMenu.PopupSwitchMenuItem {
-    _init(text, state, showRestart, showMask, maskedState) {
-      const loading  = LOADING_STATES.includes(state)
-      const active   = state == 'active'
+    _init(text, { isActive, isEnabled, showRestart, showMask }) {
+      const loading  = LOADING_STATES.includes(isActive)
       const reactive = loading == false
-      const failure  = state == 'failed'
+
+      const active   = isActive == 'active'
+      const failure  = isActive == 'failed'
+      const masked   = isEnabled == 'masked'
 
       super._init(text, active, { style_class: 'systemd-manager-item' })
 
@@ -63,7 +65,7 @@ var PopupServiceItem = GObject.registerClass({
 
       if (showMask) {
         const icon = new St.Icon({
-          icon_name:   maskedState ? 'security-high-symbolic' : 'security-low-symbolic',
+          icon_name:   masked ? 'security-high-symbolic' : 'security-low-symbolic',
           style_class: 'popup-menu-icon'
         })
 
@@ -77,7 +79,7 @@ var PopupServiceItem = GObject.registerClass({
           child:           icon
         })
 
-        button.connect('clicked', () => this.emit('mask-toggled'))
+        button.connect('clicked', () => this.emit('mask-toggled', masked))
         this.add_child(button)
       }
     }
