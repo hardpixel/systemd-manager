@@ -62,15 +62,19 @@ var PopupServiceItem = GObject.registerClass({
       }
 
       if (showMask) {
+        const icon = new St.Icon({
+          icon_name:   maskedState ? 'security-high-symbolic' : 'security-low-symbolic',
+          style_class: 'popup-menu-icon'
+        })
+
         const button = new St.Button({
-          x_align:         2,
-          reactive:        reactive, 
+          x_align:         1,
+          reactive:        reactive,
           can_focus:       reactive,
           track_hover:     reactive,
           accessible_name: 'mask',
-          style_class:     'system-menu-action toggle-switch',
-          toggle_mode:     active,
-          checked:         maskedState && active
+          style_class:     'system-menu-action systemd-manager-button',
+          child:           icon
         })
 
         button.connect('clicked', () => this.emit('maskToggle'))
