@@ -14,7 +14,7 @@ const LOADING_STATES = ['reloading', 'activating', 'deactivating', 'maintenance'
 var PopupServiceItem = GObject.registerClass({
   Signals: {
     'restarted': {},
-    'maskToggle': {}
+    'mask-toggled': {}
   }
 }, class PopupServiceItem extends PopupMenu.PopupSwitchMenuItem {
     _init(text, state, showRestart, showMask, maskedState) {
@@ -77,7 +77,7 @@ var PopupServiceItem = GObject.registerClass({
           child:           icon
         })
 
-        button.connect('clicked', () => this.emit('maskToggle'))
+        button.connect('clicked', () => this.emit('mask-toggled'))
         this.add_child(button)
       }
     }

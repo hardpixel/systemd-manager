@@ -72,7 +72,7 @@ const SystemdManager = GObject.registerClass(
           this.menu.close()
         })
 
-        entry.connect('maskToggle', () => {
+        entry.connect('mask-toggled', () => {
           const action = maskedState ? 'unmask' : 'mask'
           Utils.runServiceAction(cmdMethod, action, type, service)
           this.menu.close()
