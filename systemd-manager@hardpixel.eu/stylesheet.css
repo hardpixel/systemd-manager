@@ -6,6 +6,14 @@
   min-height: 18px;
 }
 
+.systemd-manager-button.mask-button {
+  color: grey;
+}
+
+.systemd-manager-button.mask-button:checked {
+  color: gold;
+}
+
 .systemd-manager-error {
   color: #ffa348;
 }

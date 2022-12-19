@@ -74,8 +74,9 @@ var PopupServiceItem = GObject.registerClass({
           reactive:        reactive,
           can_focus:       reactive,
           track_hover:     reactive,
+          checked:         masked,
           accessible_name: 'mask',
-          style_class:     'system-menu-action systemd-manager-button',
+          style_class:     'system-menu-action systemd-manager-button mask-button',
           child:           icon
         })
 
