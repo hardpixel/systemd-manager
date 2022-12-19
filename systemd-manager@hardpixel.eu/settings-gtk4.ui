@@ -334,8 +334,6 @@
                 </child>
               </object>
             </child>
-
-
             <child>
               <object class="GtkBox" id="show_mask_section">
                 <property name="spacing">50</property>
@@ -356,8 +354,6 @@
                 </child>
               </object>
             </child>
-            
-
             <child>
               <object class="GtkBox" id="command_method_section">
                 <property name="spacing">50</property>

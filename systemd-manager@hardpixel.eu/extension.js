@@ -38,8 +38,8 @@ const SystemdManager = GObject.registerClass(
       const entries     = this._settings.get_strv('systemd')
       const showAdd     = this._settings.get_boolean('show-add')
       const showRestart = this._settings.get_boolean('show-restart')
-      const cmdMethod   = this._settings.get_enum('command-method')
       const showMask    = this._settings.get_boolean('show-mask')
+      const cmdMethod   = this._settings.get_enum('command-method')
 
       const services    = entries.map(data => JSON.parse(data))
       const fetchStates = (type, flag) => Utils.getServicesState(
@@ -50,8 +50,7 @@ const SystemdManager = GObject.registerClass(
       const unitStates  = stateTypes.reduce(
         (all, type) => ({ ...all, [type]: fetchStates(type, 'is-active') }), {}
       )
-      
-      // code taken by  (github username:) @jonian
+
       const maskedStates = stateTypes.reduce(
         (all, type) => ({...all, [type]: fetchStates(type, 'is-enabled')}), {}
       )
@@ -62,7 +61,6 @@ const SystemdManager = GObject.registerClass(
         const entry = new PopupServiceItem(name, state, showRestart, showMask, maskedState)
 
         this.menu.addMenuItem(entry)
-
 
         entry.connect('toggled', (actor, active) => {
           const action = active ? 'start' : 'stop'
@@ -79,8 +77,6 @@ const SystemdManager = GObject.registerClass(
           Utils.runServiceAction(cmdMethod, action, type, service)
           this.menu.close()
         })
-        
-
       })
 
       if (showAdd && entries.length > 0) {
