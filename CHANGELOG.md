@@ -1,5 +1,13 @@
 # Changelog
 
+## [v14](https://github.com/hardpixel/systemd-manager/tree/v14) (2023-10-11)
+
+[Full Changelog](https://github.com/hardpixel/systemd-manager/compare/v13...v14)
+
+**Closed issues:**
+
+- Gnome 45 is coming soon ... [\#16](https://github.com/hardpixel/systemd-manager/issues/16)
+
 ## [v13](https://github.com/hardpixel/systemd-manager/tree/v13) (2023-03-19)
 
 [Full Changelog](https://github.com/hardpixel/systemd-manager/compare/v12...v13)
