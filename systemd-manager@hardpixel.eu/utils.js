@@ -1,37 +1,33 @@
-const Bytes  = imports.byteArray
-const GLib   = imports.gi.GLib
-const Config = imports.misc.config
+import GLib from 'gi://GLib'
 
-var VERSION = parseInt(Config.PACKAGE_VERSION.replace(/^3\./, '').split('.')[0])
-
-function safeSpawn(cmd) {
+export function safeSpawn(cmd) {
   try {
     return GLib.spawn_command_line_sync(cmd)
   } catch (e) {
-    return [false, Bytes.fromString(''), null, null]
+    return [false, [], null, null]
   }
 }
 
-function command(args, pipe) {
+export function command(args, pipe) {
   const cmd = [].concat(args).filter(item => !!item).join(' ')
   const str = pipe ? [cmd, pipe].join(' | ') : cmd
 
   return safeSpawn(`sh -c "${str}"`)
 }
 
-function systemctl(type, args, pipe) {
+export function systemctl(type, args, pipe) {
   const cmd = [`systemctl --${type}`].concat(args)
   return command(cmd, pipe)
 }
 
-function systemctlList(type, args) {
+export function systemctlList(type, args) {
   const res = systemctl(type, args, "awk '{print $1}'")
-  const out = Bytes.toString(res[1])
+  const out = String.fromCharCode(...res[1])
 
   return out.split('\n').filter(item => !!item)
 }
 
-function getServicesList(type) {
+export function getServicesList(type) {
   const args = ['--type=service,timer,mount', '--no-legend']
 
   const res1 = systemctlList(type, ['list-unit-files', ...args])
@@ -43,16 +39,16 @@ function getServicesList(type) {
   })
 }
 
-function getServicesState(type, flag, services) {
+export function getServicesState(type, flag, services) {
   const res = systemctl(type, [flag, ...services])
-  const out = Bytes.toString(res[1])
+  const out = String.fromCharCode(...res[1])
 
   return out.split('\n').reduce(
     (all, value, idx) => ({ ...all, [services[idx]]: value }), {}
   )
 }
 
-function runServiceAction(method, action, type, service) {
+export function runServiceAction(method, action, type, service) {
   let cmd = `systemctl ${action} ${service} --${type}`
 
   if (method == 0 && type == 'system') {
