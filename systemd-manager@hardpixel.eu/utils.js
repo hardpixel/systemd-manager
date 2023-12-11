@@ -1,6 +1,6 @@
 import GLib from 'gi://GLib'
 
-export function safeSpawn(cmd) {
+function safeSpawn(cmd) {
   try {
     return GLib.spawn_command_line_sync(cmd)
   } catch (e) {
@@ -8,19 +8,19 @@ export function safeSpawn(cmd) {
   }
 }
 
-export function command(args, pipe) {
+function command(args, pipe) {
   const cmd = [].concat(args).filter(item => !!item).join(' ')
   const str = pipe ? [cmd, pipe].join(' | ') : cmd
 
   return safeSpawn(`sh -c "${str}"`)
 }
 
-export function systemctl(type, args, pipe) {
+function systemctl(type, args, pipe) {
   const cmd = [`systemctl --${type}`].concat(args)
   return command(cmd, pipe)
 }
 
-export function systemctlList(type, args) {
+function systemctlList(type, args) {
   const res = systemctl(type, args, "awk '{print $1}'")
   const out = String.fromCharCode(...res[1])
 
