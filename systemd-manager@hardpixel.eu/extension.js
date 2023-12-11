@@ -1,6 +1,6 @@
 import GObject from 'gi://GObject'
 import St from 'gi://St'
-import * as Ext from 'resource:///org/gnome/shell/extensions/extension.js'
+import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js'
 import * as Main from 'resource:///org/gnome/shell/ui/main.js'
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js'
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js'
@@ -93,14 +93,14 @@ class SystemdManager extends PanelMenu.Button {
   }
 }
 
-export default class Extension extends Ext.Extension {
+export default class SystemdManagerExtension extends Extension {
   enable() {
     this.button = new SystemdManager(this)
     Main.panel.addToStatusArea('systemdManager', this.button)
   }
 
   disable() {
-    this.button.destroy()
+    this.button?.destroy()
     this.button = null
   }
 }

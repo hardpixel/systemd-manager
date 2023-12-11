@@ -3,7 +3,7 @@ import GObject from 'gi://GObject'
 import Gtk from 'gi://Gtk'
 import Gdk from 'gi://Gdk'
 import Gio from 'gi://Gio'
-import * as Prefs from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
+import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
 import * as Utils from './utils.js'
 
 const SERVICE_TYPES   = ['system', 'user']
@@ -269,7 +269,7 @@ class SystemdManagerPrefsWidget extends Gtk.Box {
   }
 }
 
-export default class Preferences extends Prefs.ExtensionPreferences {
+export default class SystemdManagerPreferences extends ExtensionPreferences {
   fillPreferencesWindow(window) {
     const pages  = [
       { name: 'services', icon: 'system-run-symbolic' },
