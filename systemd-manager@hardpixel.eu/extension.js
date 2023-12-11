@@ -43,22 +43,18 @@ class SystemdManager extends PanelMenu.Button {
     const cmdMethod   = this._settings.get_enum('command-method')
 
     const services    = entries.map(data => JSON.parse(data))
-    const fetchStates = (type, flag) => Utils.getServicesState(
-      type, flag, services.filter(ob => ob.type == type).map(ob => ob.service)
+    const fetchStates = type => Utils.getServicesState(
+      type, services.filter(ob => ob.type == type).map(ob => ob.service)
     )
 
-    const stateTypes    = ['system', 'user']
-    const activeStates  = stateTypes.reduce(
-      (all, type) => ({ ...all, [type]: fetchStates(type, 'is-active') }), {}
-    )
-
-    const enabledStates = stateTypes.reduce(
-      (all, type) => ({...all, [type]: fetchStates(type, 'is-enabled')}), {}
+    const stateTypes  = ['system', 'user']
+    const stateValues = stateTypes.reduce(
+      (all, type) => ({ ...all, [type]: fetchStates(type) }), {}
     )
 
     services.forEach(({ type, name, service }) => {
-      const isActive  = activeStates[type][service]
-      const isEnabled = enabledStates[type][service]
+      const isActive  = stateValues[type][service]['is-active']
+      const isEnabled = stateValues[type][service]['is-enabled']
 
       const entry = new PopupServiceItem(name, { isActive, isEnabled, showRestart, showMask })
       this.menu.addMenuItem(entry)

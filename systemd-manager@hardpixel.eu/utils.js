@@ -27,6 +27,15 @@ export function systemctlList(type, args) {
   return out.split('\n').filter(item => !!item)
 }
 
+function systemctlStates(type, flag, services) {
+  const res = systemctl(type, [flag, ...services])
+  const out = String.fromCharCode(...res[1])
+
+  return out.split('\n').reduce(
+    (all, value, idx) => ({ ...all, [services[idx]]: value }), {}
+  )
+}
+
 export function getServicesList(type) {
   const args = ['--type=service,timer,mount', '--no-legend']
 
@@ -39,13 +48,18 @@ export function getServicesList(type) {
   })
 }
 
-export function getServicesState(type, flag, services) {
-  const res = systemctl(type, [flag, ...services])
-  const out = String.fromCharCode(...res[1])
+export function getServicesState(type, services) {
+  const states  = {}
 
-  return out.split('\n').reduce(
-    (all, value, idx) => ({ ...all, [services[idx]]: value }), {}
-  )
+  const active  = systemctlStates(type, 'is-active', services)
+  const enabled = systemctlStates(type, 'is-enabled', services)
+
+  services.forEach(service => states[service] = {
+    'is-active':  active[service],
+    'is-enabled': enabled[service]
+  })
+
+  return states
 }
 
 export function runServiceAction(method, action, type, service) {
