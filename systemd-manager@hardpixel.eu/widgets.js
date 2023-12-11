@@ -1,7 +1,6 @@
 import St from 'gi://St'
 import GObject from 'gi://GObject'
 import * as Animation from 'resource:///org/gnome/shell/ui/animation.js'
-import * as Panel from 'resource:///org/gnome/shell/ui/panel.js'
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js'
 
 const LOADING_STATES = ['reloading', 'activating', 'deactivating', 'maintenance']
@@ -31,7 +30,7 @@ export class PopupServiceItem extends PopupMenu.PopupSwitchMenuItem {
     }
 
     if (loading) {
-      const spinner = new Animation.Spinner(Panel.PANEL_ICON_SIZE, {
+      const spinner = new Animation.Spinner(16, {
         animate: true,
         hideOnStop: true
       })
