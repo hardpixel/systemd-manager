@@ -43,7 +43,7 @@ export function getServicesList(type) {
   const res2 = systemctlList(type, ['list-units', ...args])
   const list = res1.concat(res2)
 
-  return list.sort((first, second) => {
+  return Array.from(new Set(list)).sort((first, second) => {
     return first.toLowerCase().localeCompare(second.toLowerCase())
   })
 }
