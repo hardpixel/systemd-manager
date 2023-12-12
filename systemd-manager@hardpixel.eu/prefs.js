@@ -9,13 +9,9 @@ import * as Utils from './utils.js'
 const SERVICE_TYPES   = ['system', 'user']
 const DEFAULT_BINDING = Gio.SettingsBindFlags.DEFAULT
 
-class SystemdManagerPrefsWidget extends Gtk.Box {
-  static {
-    GObject.registerClass(this)
-  }
+class SystemdManager {
 
-  constructor(prefs, params) {
-    super(params)
+  constructor(prefs) {
     this._settings = prefs.getSettings()
 
     const provider = new Gtk.CssProvider()
@@ -29,9 +25,6 @@ class SystemdManagerPrefsWidget extends Gtk.Box {
 
     this._buildable = new Gtk.Builder()
     this._buildable.add_from_file(`${prefs.path}/settings.ui`)
-
-    this._container = this.getObject('prefs_widget')
-    this.append(this._container)
 
     this.bindBoolean('show-add')
     this.bindBoolean('show-restart')
@@ -271,32 +264,11 @@ class SystemdManagerPrefsWidget extends Gtk.Box {
 
 export default class SystemdManagerPreferences extends ExtensionPreferences {
   fillPreferencesWindow(window) {
-    const pages  = [
-      { name: 'services', icon: 'system-run-symbolic' },
-      { name: 'settings', icon: 'preferences-system-symbolic' }
-    ]
+    const manager = new SystemdManager(this)
 
-    const widget = new SystemdManagerPrefsWidget(this)
-
-    pages.forEach(({ name, icon }) => {
-      const page  = Adw.PreferencesPage.new()
-      const group = Adw.PreferencesGroup.new()
-
-      const label = widget.getObject(`${name}_label`)
-      const prefs = widget.getObject(`${name}_prefs`)
-
-      page.set_name(name)
-      page.set_title(label.get_text())
-      page.set_icon_name(icon)
-
-      prefs.unparent()
-      group.add(prefs)
-
-      page.add(group)
-      window.add(page)
-    })
+    window.add(manager.getObject('services_page'))
+    window.add(manager.getObject('settings_page'))
 
     window.set_default_size(620, 680)
-    widget.unrealize()
   }
 }

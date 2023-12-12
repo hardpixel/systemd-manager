@@ -31,362 +31,275 @@
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkNotebook" id="prefs_widget">
-    <property name="hexpand">1</property>
-    <property name="show-border">0</property>
-    <property name="scrollable">1</property>
+  <object class="AdwPreferencesPage" id="services_page">
+    <property name="name">services-page</property>
+    <property name="title" translatable="yes">Services</property>
+    <property name="icon-name">system-run-symbolic</property>
     <child>
-      <object class="GtkNotebookPage">
-        <property name="child">
-          <object class="GtkBox" id="services_prefs">
-            <property name="margin-start">20</property>
-            <property name="margin-end">20</property>
-            <property name="margin-top">20</property>
-            <property name="margin-bottom">20</property>
+      <object class="AdwPreferencesGroup">
+        <property name="title" translatable="yes">Listed Services</property>
+        <child>
+          <object class="GtkBox" id="services_list_section">
             <property name="orientation">vertical</property>
-            <property name="spacing">20</property>
             <child>
-              <object class="GtkBox" id="services_list_section">
+              <object class="GtkBox">
+                <property name="vexpand">1</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkLabel">
-                    <property name="can-focus">0</property>
-                    <property name="halign">start</property>
-                    <property name="margin-bottom">10</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Listed Services&lt;/b&gt;</property>
-                    <property name="use-markup">1</property>
+                  <object class="GtkScrolledWindow">
+                    <property name="margin-start">5</property>
+                    <property name="margin-end">5</property>
+                    <property name="margin-top">5</property>
+                    <property name="height-request">200</property>
+                    <property name="hscrollbar_policy">automatic</property>
+                    <property name="vscrollbar_policy">automatic</property>
+                    <child>
+                      <object class="GtkTreeView" id="services_list">
+                        <property name="margin-bottom">5</property>
+                        <property name="vexpand">1</property>
+                        <property name="model">services_list_model</property>
+                        <property name="activate-on-single-click">1</property>
+                        <child internal-child="selection">
+                          <object class="GtkTreeSelection" id="services_selection"/>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="tree_label_col">
+                            <property name="title" translatable="yes">Label</property>
+                            <property name="expand">1</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="tree_label_cell"/>
+                              <attributes>
+                                <attribute name="text">0</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="tree_service_col">
+                            <property name="title" translatable="yes">Service</property>
+                            <property name="expand">1</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="tree_service_cell"/>
+                              <attributes>
+                                <attribute name="text">1</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="tree_type_col">
+                            <property name="title" translatable="yes">Type</property>
+                            <property name="expand">1</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="tree_type_cell"/>
+                              <attributes>
+                                <attribute name="text">2</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                 </child>
-                <child>
-                  <object class="GtkBox">
-                    <property name="vexpand">1</property>
-                    <property name="orientation">vertical</property>
-                    <child>
-                      <object class="GtkScrolledWindow">
-                        <property name="width-request">500</property>
-                        <property name="height-request">200</property>
-                        <property name="hscrollbar_policy">automatic</property>
-                        <property name="vscrollbar_policy">automatic</property>
-                        <child>
-                          <object class="GtkTreeView" id="services_list">
-                            <property name="vexpand">1</property>
-                            <property name="model">services_list_model</property>
-                            <property name="activate-on-single-click">1</property>
-                            <child internal-child="selection">
-                              <object class="GtkTreeSelection" id="services_selection"/>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="tree_label_col">
-                                <property name="title" translatable="yes">Label</property>
-                                <property name="expand">1</property>
-                                <child>
-                                  <object class="GtkCellRendererText" id="tree_label_cell"/>
-                                  <attributes>
-                                    <attribute name="text">0</attribute>
-                                  </attributes>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="tree_service_col">
-                                <property name="title" translatable="yes">Service</property>
-                                <property name="expand">1</property>
-                                <child>
-                                  <object class="GtkCellRendererText" id="tree_service_cell"/>
-                                  <attributes>
-                                    <attribute name="text">1</attribute>
-                                  </attributes>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="tree_type_col">
-                                <property name="title" translatable="yes">Type</property>
-                                <property name="expand">1</property>
-                                <child>
-                                  <object class="GtkCellRendererText" id="tree_type_cell"/>
-                                  <attributes>
-                                    <attribute name="text">2</attribute>
-                                  </attributes>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <style>
-                      <class name="frame"/>
-                    </style>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkBox" id="services_toolbar">
-                    <property name="sensitive">0</property>
-                    <child>
-                      <object class="GtkButton" id="service_up">
-                        <property name="receives-default">1</property>
-                        <child>
-                          <object class="GtkImage">
-                            <property name="can-focus">0</property>
-                            <property name="icon-name">go-up-symbolic</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="service_down">
-                        <property name="receives-default">1</property>
-                        <child>
-                          <object class="GtkImage">
-                            <property name="can-focus">0</property>
-                            <property name="icon-name">go-down-symbolic</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="service_remove">
-                        <property name="receives-default">1</property>
-                        <child>
-                          <object class="GtkImage">
-                            <property name="can-focus">0</property>
-                            <property name="icon-name">list-remove-symbolic</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <style>
-                      <class name="toolbar"/>
-                      <class name="frame"/>
-                    </style>
-                  </object>
-                </child>
+                <style>
+                  <class name="frame"/>
+                </style>
               </object>
             </child>
             <child>
-              <object class="GtkBox" id="add_service_section">
-                <property name="orientation">vertical</property>
+              <object class="GtkBox" id="services_toolbar">
+                <property name="sensitive">0</property>
                 <child>
-                  <object class="GtkLabel">
-                    <property name="can-focus">0</property>
-                    <property name="halign">start</property>
-                    <property name="margin-bottom">10</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Add new Service&lt;/b&gt;</property>
-                    <property name="use-markup">1</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkBox">
-                    <property name="orientation">vertical</property>
+                  <object class="GtkButton" id="service_up">
+                    <property name="receives-default">1</property>
                     <child>
-                      <object class="GtkGrid">
-                        <property name="margin-start">10</property>
-                        <property name="margin-end">10</property>
-                        <property name="margin-top">10</property>
-                        <property name="margin-bottom">10</property>
-                        <property name="row-spacing">10</property>
-                        <property name="column-spacing">10</property>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="can-focus">0</property>
-                            <property name="halign">end</property>
-                            <property name="label" translatable="yes">Label</property>
-                            <layout>
-                              <property name="column">0</property>
-                              <property name="row">0</property>
-                            </layout>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="can-focus">0</property>
-                            <property name="halign">end</property>
-                            <property name="label" translatable="yes">Service</property>
-                            <layout>
-                              <property name="column">0</property>
-                              <property name="row">1</property>
-                            </layout>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="add_service_label">
-                            <property name="hexpand">1</property>
-                            <property name="placeholder-text" translatable="yes">Name in menu</property>
-                            <layout>
-                              <property name="column">1</property>
-                              <property name="row">0</property>
-                            </layout>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="add_service_unit">
-                            <property name="hexpand">1</property>
-                            <property name="placeholder-text" translatable="yes">Search for service</property>
-                            <property name="completion">services_add_completion</property>
-                            <layout>
-                              <property name="column">1</property>
-                              <property name="row">1</property>
-                            </layout>
-                          </object>
-                        </child>
+                      <object class="GtkImage">
+                        <property name="can-focus">0</property>
+                        <property name="icon-name">go-up-symbolic</property>
                       </object>
                     </child>
-                    <style>
-                      <class name="frame"/>
-                    </style>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkBox" id="add_toolbar">
+                  <object class="GtkButton" id="service_down">
+                    <property name="receives-default">1</property>
                     <child>
-                      <object class="GtkButton" id="service_add">
-                        <property name="receives-default">1</property>
-                        <child>
-                          <object class="GtkBox">
-                            <property name="spacing">5</property>
-                            <child>
-                              <object class="GtkImage">
-                                <property name="can-focus">0</property>
-                                <property name="icon-name">list-add-symbolic</property>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="can-focus">0</property>
-                                <property name="margin-start">5</property>
-                                <property name="margin-end">5</property>
-                                <property name="label" translatable="yes">Add</property>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
+                      <object class="GtkImage">
+                        <property name="can-focus">0</property>
+                        <property name="icon-name">go-down-symbolic</property>
                       </object>
                     </child>
-                    <style>
-                      <class name="toolbar"/>
-                      <class name="frame"/>
-                    </style>
                   </object>
                 </child>
+                <child>
+                  <object class="GtkButton" id="service_remove">
+                    <property name="receives-default">1</property>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="can-focus">0</property>
+                        <property name="icon-name">list-remove-symbolic</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <style>
+                  <class name="toolbar"/>
+                </style>
               </object>
             </child>
+            <style>
+              <class name="card"/>
+            </style>
           </object>
-        </property>
-        <property name="tab">
-          <object class="GtkLabel" id="services_label">
-            <property name="can-focus">0</property>
-            <property name="hexpand">1</property>
-            <property name="label" translatable="yes">Services</property>
-          </object>
-        </property>
+        </child>
       </object>
     </child>
     <child>
-      <object class="GtkNotebookPage">
-        <property name="child">
-          <object class="GtkBox" id="settings_prefs">
-            <property name="valign">start</property>
-            <property name="margin-start">20</property>
-            <property name="margin-end">20</property>
-            <property name="margin-top">20</property>
-            <property name="margin-bottom">20</property>
+      <object class="AdwPreferencesGroup">
+        <property name="title" translatable="yes">Add new Service</property>
+        <child>
+          <object class="GtkBox" id="add_service_section">
             <property name="orientation">vertical</property>
-            <property name="spacing">15</property>
-            <property name="homogeneous">1</property>
             <child>
-              <object class="GtkBox" id="show_add_section">
-                <property name="spacing">50</property>
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkLabel">
-                    <property name="can-focus">0</property>
-                    <property name="valign">center</property>
-                    <property name="label" translatable="yes">Show add services</property>
+                  <object class="GtkBox">
+                    <property name="margin-start">10</property>
+                    <property name="margin-end">10</property>
+                    <property name="margin-top">10</property>
+                    <property name="margin-bottom">10</property>
+                    <property name="spacing">10</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkEntry" id="add_service_label">
+                        <property name="hexpand">1</property>
+                        <property name="placeholder-text" translatable="yes">Name in menu</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="add_service_unit">
+                        <property name="hexpand">1</property>
+                        <property name="placeholder-text" translatable="yes">Search for service</property>
+                        <property name="completion">services_add_completion</property>
+                      </object>
+                    </child>
                   </object>
                 </child>
-                <child>
-                  <object class="GtkSwitch" id="show_add">
-                    <property name="hexpand">1</property>
-                    <property name="halign">end</property>
-                    <property name="valign">center</property>
-                    <property name="active">1</property>
-                  </object>
-                </child>
+                <style>
+                  <class name="frame"/>
+                </style>
               </object>
             </child>
             <child>
-              <object class="GtkBox" id="show_restart_section">
-                <property name="spacing">50</property>
+              <object class="GtkBox" id="add_toolbar">
                 <child>
-                  <object class="GtkLabel">
-                    <property name="can-focus">0</property>
-                    <property name="valign">center</property>
-                    <property name="label" translatable="yes">Show restart button</property>
+                  <object class="GtkButton" id="service_add">
+                    <property name="receives-default">1</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="spacing">5</property>
+                        <child>
+                          <object class="GtkImage">
+                            <property name="can-focus">0</property>
+                            <property name="icon-name">list-add-symbolic</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="can-focus">0</property>
+                            <property name="margin-start">5</property>
+                            <property name="margin-end">5</property>
+                            <property name="label" translatable="yes">Add</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                 </child>
-                <child>
-                  <object class="GtkSwitch" id="show_restart">
-                    <property name="hexpand">1</property>
-                    <property name="halign">end</property>
-                    <property name="valign">center</property>
-                    <property name="active">1</property>
-                  </object>
-                </child>
+                <style>
+                  <class name="toolbar"/>
+                </style>
               </object>
             </child>
+            <style>
+              <class name="card"/>
+            </style>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="AdwPreferencesPage" id="settings_page">
+    <property name="name">settings-page</property>
+    <property name="title" translatable="yes">Settings</property>
+    <property name="icon-name">preferences-system-symbolic</property>
+    <child>
+      <object class="AdwPreferencesGroup">
+        <property name="title" translatable="yes">General</property>
+        <child>
+          <object class="AdwActionRow">
+            <property name="title" translatable="yes">Command</property>
+            <property name="subtitle" translatable="yes">Command to use for managing services</property>
+            <property name="activatable-widget">command_method</property>
             <child>
-              <object class="GtkBox" id="show_mask_section">
-                <property name="spacing">50</property>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="can-focus">0</property>
-                    <property name="valign">center</property>
-                    <property name="label" translatable="yes">Show mask button</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkSwitch" id="show_mask">
-                    <property name="hexpand">1</property>
-                    <property name="halign">end</property>
-                    <property name="valign">center</property>
-                    <property name="active">0</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkBox" id="command_method_section">
-                <property name="spacing">50</property>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="can-focus">0</property>
-                    <property name="valign">center</property>
-                    <property name="label" translatable="yes">Command method</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkComboBoxText" id="command_method">
-                    <property name="hexpand">1</property>
-                    <property name="width-request">120</property>
-                    <property name="halign">end</property>
-                    <property name="active-id">0</property>
-                    <items>
-                      <item id="0" translatable="yes">pkexec</item>
-                      <item id="1" translatable="yes">systemctl</item>
-                    </items>
-                  </object>
-                </child>
+              <object class="GtkComboBoxText" id="command_method">
+                <property name="valign">center</property>
+                <property name="width-request">120</property>
+                <property name="active-id">0</property>
+                <items>
+                  <item id="0" translatable="yes">pkexec</item>
+                  <item id="1" translatable="yes">systemctl</item>
+                </items>
               </object>
             </child>
           </object>
-        </property>
-        <property name="tab">
-          <object class="GtkLabel" id="settings_label">
-            <property name="can-focus">0</property>
-            <property name="hexpand">1</property>
-            <property name="label" translatable="yes">Settings</property>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="AdwPreferencesGroup">
+        <property name="title" translatable="yes">Appearance</property>
+        <child>
+          <object class="AdwActionRow">
+            <property name="title" translatable="yes">Add services</property>
+            <property name="subtitle" translatable="yes">Show add services button in menu</property>
+            <property name="activatable-widget">show_add</property>
+            <child>
+              <object class="GtkSwitch" id="show_add">
+                <property name="valign">center</property>
+                <property name="active">1</property>
+              </object>
+            </child>
           </object>
-        </property>
+        </child>
+        <child>
+          <object class="AdwActionRow">
+            <property name="title" translatable="yes">Restart service</property>
+            <property name="subtitle" translatable="yes">Show restart button in service item</property>
+            <property name="activatable-widget">show_restart</property>
+            <child>
+              <object class="GtkSwitch" id="show_restart">
+                <property name="valign">center</property>
+                <property name="active">1</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwActionRow">
+            <property name="title" translatable="yes">Mask service</property>
+            <property name="subtitle" translatable="yes">Show mask button in service item</property>
+            <property name="activatable-widget">show_mask</property>
+            <child>
+              <object class="GtkSwitch" id="show_mask">
+                <property name="valign">center</property>
+                <property name="active">0</property>
+              </object>
+            </child>
+          </object>
+        </child>
       </object>
     </child>
   </object>
