@@ -1,0 +1,40 @@
+---
+name: Build
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - systemd-manager@hardpixel.eu/**
+      - package.json
+      - yarn.lock
+      - rollup.config.js
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node: [16.0, 18.0]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Run build
+        run: yarn build
