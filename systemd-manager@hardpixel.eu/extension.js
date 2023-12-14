@@ -13,7 +13,7 @@ class SystemdManager extends PanelMenu.Button {
   }
 
   constructor(ext) {
-    super(0.2, null, false)
+    super(0.5, null, false)
 
     this._settings = ext.getSettings()
     this._settings.connect('changed', () => this.refresh(ext))
