@@ -1,4 +1,5 @@
 import GObject from 'gi://GObject'
+import GLib from 'gi://GLib'
 import St from 'gi://St'
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js'
 import * as Main from 'resource:///org/gnome/shell/ui/main.js'
@@ -28,7 +29,9 @@ class SystemdManager extends PanelMenu.Button {
 
     this.menu.connect('open-state-changed', () => {
       if (this.menu.isOpen) {
-        this.refresh(ext)
+        GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, _ => {
+            this.refresh(ext)
+        })
       }
     })
   }
