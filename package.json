@@ -1,6 +1,6 @@
 {
   "name": "systemd-manager",
-  "version": "15",
+  "version": "16",
   "description": "GNOME Shell dock extension",
   "repository": "https://github.com/hardpixel/systemd-manager",
   "author": "Jonian Guveli",

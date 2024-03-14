@@ -1,5 +1,14 @@
 # Changelog
 
+## [v16](https://github.com/hardpixel/systemd-manager/tree/v16) (2024-03-14)
+
+[Full Changelog](https://github.com/hardpixel/systemd-manager/compare/v15...v16)
+
+**Closed issues:**
+
+- Gnome46 [\#21](https://github.com/hardpixel/systemd-manager/issues/21)
+- Systemd-manager in its own NixOS Package [\#20](https://github.com/hardpixel/systemd-manager/issues/20)
+
 ## [v15](https://github.com/hardpixel/systemd-manager/tree/v15) (2023-12-11)
 
 [Full Changelog](https://github.com/hardpixel/systemd-manager/compare/v14...v15)
