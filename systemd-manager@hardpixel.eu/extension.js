@@ -23,7 +23,7 @@ class SystemdManager extends PanelMenu.Button {
       style_class: 'system-status-icon'
     })
 
-    this.add_actor(icon)
+    this.add_child(icon)
     this.refresh(ext)
 
     this.menu.connect('open-state-changed', () => {
