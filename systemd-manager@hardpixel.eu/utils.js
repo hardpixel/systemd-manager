@@ -37,7 +37,7 @@ function systemctlStates(type, flag, services) {
 }
 
 export function getServicesList(type) {
-  const args = ['--type=service,timer,mount', '--no-legend']
+  const args = ['--type=service,timer,mount,target', '--no-legend']
 
   const res1 = systemctlList(type, ['list-unit-files', ...args])
   const res2 = systemctlList(type, ['list-units', ...args])
