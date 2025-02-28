@@ -1,5 +1,9 @@
 # Changelog
 
+## [v18](https://github.com/hardpixel/systemd-manager/tree/v18) (2025-02-28)
+
+[Full Changelog](https://github.com/hardpixel/systemd-manager/compare/v17...v18)
+
 ## [v17](https://github.com/hardpixel/systemd-manager/tree/v17) (2024-07-27)
 
 [Full Changelog](https://github.com/hardpixel/systemd-manager/compare/v16...v17)
