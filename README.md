@@ -4,10 +4,15 @@ Systemd Manager is a Gnome Shell Extension which allows you to start/stop system
 ![Screenshot](https://raw.githubusercontent.com/hardpixel/systemd-manager/master/screenshot.png)
 
 ## Install
-Copy folder `systemd-manager@hardpixel.eu` into `~/.local/share/gnome-shell/extensions`.
+You can install the latest version using the commands below.
+
+```bash
+wget https://github.com/hardpixel/systemd-manager/releases/download/v19/systemd-manager-v19.zip
+gnome-extensions install --force systemd-manager-v19.zip
+```
 
 ### Gnome Shell Extensions
-The easiest way to install this extension is via the official [Gnome Shell Extensions](https://extensions.gnome.org) resource page [here](https://extensions.gnome.org/extension/4174/systemd-manager).
+For Gnome versions up to 44 you can install the extension from the official extensions resource page [here](https://extensions.gnome.org/extension/4174/systemd-manager).
 
 ### Packages
 Arch Linux: [AUR package](https://aur.archlinux.org/packages/gnome-shell-extension-systemd-manager)
