@@ -1,7 +1,7 @@
 {
   "name": "systemd-manager",
   "version": "19",
-  "description": "GNOME Shell dock extension",
+  "description": "GNOME Shell systemmd management extension",
   "repository": "https://github.com/hardpixel/systemd-manager",
   "author": "Jonian Guveli",
   "license": "GPL",
