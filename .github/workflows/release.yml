@@ -36,6 +36,6 @@ jobs:
         if: ${{ !env.ACT }}
         with:
           overwrite: true
-          file: build/sytemd-manager-v${{ github.event.inputs.version }}.zip
+          file: build/systemd-manager-v${{ github.event.inputs.version }}.zip
           tag: v${{ github.event.inputs.version }}
           body: Version ${{ github.event.inputs.version }}
