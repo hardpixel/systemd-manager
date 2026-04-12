@@ -5,6 +5,7 @@
   "repository": "https://github.com/hardpixel/systemd-manager",
   "author": "Jonian Guveli",
   "license": "GPL",
+  "type": "module",
   "private": true,
   "scripts": {
     "build": "rollup -c",
