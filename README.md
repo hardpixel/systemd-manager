@@ -7,8 +7,8 @@ Systemd Manager is a Gnome Shell Extension which allows you to start/stop system
 You can install the latest version using the commands below.
 
 ```bash
-wget https://github.com/hardpixel/systemd-manager/releases/download/v19/systemd-manager-v19.zip
-gnome-extensions install --force systemd-manager-v19.zip
+wget https://github.com/hardpixel/systemd-manager/releases/download/v20/systemd-manager-v20.zip
+gnome-extensions install --force systemd-manager-v20.zip
 ```
 
 ### Gnome Shell Extensions
