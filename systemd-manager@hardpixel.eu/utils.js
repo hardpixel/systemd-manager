@@ -66,7 +66,7 @@ export function runServiceAction(method, action, type, service) {
   let cmd = `systemctl ${action} ${service} --${type}`
 
   if (method == 0 && type == 'system') {
-    cmd = `pkexec --user root ${cmd}`
+    cmd = `(sudo -V && sudo -n ${cmd}) || pkexec --user root ${cmd}`
   }
 
   GLib.spawn_command_line_async(`sh -c "${cmd}; exit"`)
